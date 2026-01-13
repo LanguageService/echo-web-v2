@@ -1,0 +1,95 @@
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  code: number;
+  message: string;
+  is_verified: boolean;
+  token: {
+    refresh: string;
+    access: string;
+  };
+}
+
+export interface SignUpRequest {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+}
+
+export interface SignUpResponse {
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
+export async function loginUser(
+  credentials: LoginRequest
+): Promise<LoginResponse> {
+  const response = await fetch(`${API_BASE_URL}/auth/login/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) {
+    throw new Error("Login failed");
+  }
+
+  return response.json();
+}
+
+export async function signinUser(
+  credentials: SignUpRequest
+): Promise<SignUpResponse> {
+  const response = await fetch(`${API_BASE_URL}/auth/customer/user/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) {
+    throw new Error("signup failed");
+  }
+
+  return response.json();
+}
+
+export interface Language {
+  code: string;
+  name: string;
+  native_name: string;
+  flag_emoji: string;
+  speech_to_text_supported: boolean;
+  text_to_speech_supported: boolean;
+  translation_supported: boolean;
+  is_african_language: boolean;
+}
+
+export interface LanguagesResponse {
+  count: number;
+  languages: Language[];
+}
+
+export const fetchLanguages = async (): Promise<LanguagesResponse> => {
+  const response = await fetch(`${API_BASE_URL}/voice/languages/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch languages");
+  }
+  return response.json();
+};
