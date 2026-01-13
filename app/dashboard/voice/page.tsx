@@ -4,8 +4,9 @@ import { ArrowLeft, ChevronDown, MicOff } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { languages, popularLanguages } from "@/lib/languages";
-
 import { fetchLanguages, type Language } from "@/lib/api";
+import Badge from "@/Components/Badge";
+import LangCard from "@/Components/LangCard";
 
 export default function LanguageSelection() {
   const [languages, setLanguages] = useState<Language[]>([]);
@@ -122,7 +123,7 @@ export default function LanguageSelection() {
           {popularLanguages.map((lang) => (
             <div
               key={lang.name}
-              className={`w-full rounded-xl border p-3 sm:p-4 text-center ${
+              className={`w-full rounded-xl border border-[#b9ced5] p-3 sm:p-4 text-center ${
                 lang.disabled
                   ? "opacity-40"
                   : "hover:border-[#F79009] cursor-pointer"
@@ -137,7 +138,7 @@ export default function LanguageSelection() {
 
       {/* Footer Bar */}
       <div className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-6 lg:left-72 lg:right-10">
-        <div className="bg-white border rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
+        <div className="bg-white border border-[#b9ced5] rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
             <Badge code={inputLang.code} label={inputLang.name} />
             <button
@@ -158,106 +159,5 @@ export default function LanguageSelection() {
         </div>
       </div>
     </main>
-  );
-}
-
-function LangCard({
-  step,
-  code,
-  label,
-  type,
-  value,
-  active,
-  languages,
-  onSelect,
-}: {
-  step: number;
-  code: string;
-  label: string;
-  type: string;
-  value: string;
-  active?: boolean;
-  languages: Language[];
-  onSelect: (lang: Language) => void;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div
-      className={`bg-[#eff4f5] african-waves-pattern relative rounded-2xl border-2 p-5 sm:p-8 ${
-        active ? "border-[#b9ced5]" : "border-[#b9ced5]"
-      }`}
-    >
-      <div
-        className={`absolute top-4 right-4 w-6 h-6 rounded-full text-xs flex items-center justify-center text-white ${
-          active ? "bg-[#12B76A]" : "bg-[#F79009]"
-        }`}
-      >
-        {step}
-      </div>
-
-      <div className="flex flex-col items-center text-center">
-        <div
-          className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mb-3 ${
-            active ? "bg-[#E0F7EC]" : "bg-[#FDEAD7]"
-          }`}
-        >
-          <span
-            className={`font-semibold ${
-              active ? "text-[#12B76A]" : "text-[#F79009]"
-            }`}
-          >
-            {code}
-          </span>
-        </div>
-
-        <p className="font-semibold text-sm sm:text-base text-[#0C141D]">
-          {label}
-        </p>
-        <p className="text-xs text-[#667085] mt-1">{type}</p>
-
-        <div className="mt-6 w-full text-left relative">
-          <p className="text-xs text-[#667085] mb-1">
-            Change {type.split(" ")[0]}
-          </p>
-          <div
-            className="border rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            <span>{value}</span>
-            <ChevronDown className="w-4 h-4 text-[#667085]" />
-          </div>
-
-          {isOpen && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-xl shadow-lg max-h-48 overflow-y-auto z-10">
-              {languages.map((lang) => (
-                <div
-                  key={lang.code}
-                  className="px-4 py-2 hover:bg-gray-50 cursor-pointer flex items-center gap-2"
-                  onClick={() => {
-                    onSelect(lang);
-                    setIsOpen(false);
-                  }}
-                >
-                  <span>{lang.flag_emoji}</span>
-                  <span>
-                    {lang.name} ({lang.native_name})
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Badge({ code, label }: { code: string; label: string }) {
-  return (
-    <div className="flex items-center gap-2 border rounded-xl px-4 py-2">
-      <span className="font-semibold text-sm">{code}</span>
-      <span className="text-sm text-[#667085]">{label}</span>
-    </div>
   );
 }
