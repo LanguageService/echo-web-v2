@@ -57,27 +57,6 @@ export default function LanguageSelection() {
 
   return (
     <main className="min-h-screen african-geometric-pattern bg-background px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6 pb-40">
-      {/* Top Bar */}
-      <div className="flex flex-wrap gap-4 sm:flex-nowrap items-center justify-between border-b pb-4">
-        <div className="flex items-center gap-2 text-[#0C141D] font-semibold">
-          <ArrowLeft className="w-5 h-5" />
-          Language Selection
-        </div>
-
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="hidden sm:flex items-center gap-2 text-sm">
-            <div className="w-8 h-8 rounded-full bg-[#F2F4F7] flex items-center justify-center">
-              👤
-            </div>
-            Hi, John 👋
-          </div>
-
-          <button className="bg-[#F79009] hover:bg-[#E68200] text-white px-5 py-2 rounded-full text-sm font-semibold shadow">
-            Try Premium
-          </button>
-        </div>
-      </div>
-
       {/* Heading */}
       <div className="mt-14 text-center max-w-2xl mx-auto">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0C141D]">
@@ -149,8 +128,18 @@ export default function LanguageSelection() {
             </button>
             <Badge code={outputLang.code} label={outputLang.name} />
           </div>
-
-          <Link href="/dashboard/voice/translate">
+          {/* <Link href="/dashboard/voice/translate"> */}
+          <Link
+            href={`/dashboard/voice/translate?inputLang=${
+              inputLang.code
+            }&outputLang=${outputLang.code}&inputName=${encodeURIComponent(
+              inputLang.name
+            )}&outputName=${encodeURIComponent(
+              outputLang.name
+            )}&inputNative=${encodeURIComponent(
+              inputLang.native_name
+            )}&outputNative=${encodeURIComponent(outputLang.native_name)}`}
+          >
             <button className="w-full sm:w-auto bg-[#F79009] hover:bg-[#E68200] text-white px-6 sm:px-8 py-3 rounded-full text-sm font-semibold shadow flex items-center justify-center gap-2">
               <MicOff className="w-4 h-4" />
               Start Translating

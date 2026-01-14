@@ -1,8 +1,9 @@
 "use client";
-
-import { useState } from "react";
+import { Moon } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/Components/Sidebar";
-import { Menu, X } from "lucide-react";
+import { toast } from "react-toastify";
 
 export default function DashboardLayout({
   children,
@@ -10,6 +11,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(true); // default open on desktop
+  const router = useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      toast.error("Please log in to access the dashboard.");
+    }
+  }, [router]);
 
   return (
     <div className="flex min-h-screen bg-gray-50 relative">
@@ -40,18 +49,33 @@ export default function DashboardLayout({
         `}
       >
         {/* Top bar */}
+
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 border-b bg-white z-50">
-          <h1 className="font-semibold text-lg">Dashboard</h1>
-          <button
-            onClick={() => setOpen(!open)}
-            className="p-2 rounded-md hover:bg-gray-100"
-          >
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* User */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-[#F2F4F7] flex items-center justify-center">
+              👨‍💼
+            </div>
+            <div>
+              <p className="font-semibold text-sm text-[#0C141D]">
+                Hi, John 👋
+              </p>
+              <p className="text-xs text-[#667085]">Welcome back</p>
+            </div>
+          </div>
+
+          {/* Right */}
+          <div className="flex items-center gap-4">
+            <Moon className="w-5 h-5 text-[#667085]" />
+
+            <button className="bg-[#F79009] hover:bg-[#E68200] text-white px-5 py-2 rounded-full text-sm font-semibold shadow">
+              Try Premium
+            </button>
+          </div>
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-2 lg:p-2">
           <div className="min-h-screen african-geometric-pattern bg-background">
             {children}
           </div>

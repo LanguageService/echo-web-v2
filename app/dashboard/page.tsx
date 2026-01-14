@@ -4,33 +4,8 @@ import Link from "next/link";
 export default function Dashboard() {
   return (
     <main className="min-h-screen bg-white px-4 sm:px-6 lg:px-10 pt-6 lg:pt-8 pb-24">
-      {/* <main className="min-h-screen bg-white px-10 pt-8 pb-24"> */}
-      {/* Top Bar */}
-      <div className="flex items-center justify-between">
-        {/* User */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-[#F2F4F7] flex items-center justify-center">
-            👨‍💼
-          </div>
-          <div>
-            <p className="font-semibold text-sm text-[#0C141D]">Hi, John 👋</p>
-            <p className="text-xs text-[#667085]">Welcome back</p>
-          </div>
-        </div>
-
-        {/* Right */}
-        <div className="flex items-center gap-4">
-          <Moon className="w-5 h-5 text-[#667085]" />
-
-          <button className="bg-[#F79009] hover:bg-[#E68200] text-white px-5 py-2 rounded-full text-sm font-semibold shadow">
-            Try Premium
-          </button>
-        </div>
-      </div>
-
-      {/* Heading */}
       {/* <h1 className="mt-12 text-[40px] font-bold leading-tight text-[#0C141D]"> */}
-      <h1 className="mt-10 lg:mt-12 text-3xl sm:text-4xl lg:text-[40px] font-bold leading-tight text-[#0C141D]">
+      <h1 className="mt-2 lg:mt-2 text-3xl sm:text-4xl lg:text-[40px] font-bold leading-tight text-[#0C141D]">
         Choose how you want to <br />
         <span className="text-[#12B76A]">translate</span> today.
       </h1>
@@ -69,7 +44,7 @@ export default function Dashboard() {
 
       {/* Recent */}
       {/* <div className="mt-14 flex items-center justify-between"> */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-[50px]">
         <h2 className="font-semibold text-lg text-[#0C141D]">
           Recent translations
         </h2>
@@ -154,11 +129,9 @@ function Card({
         </div>
 
         <p className="font-semibold text-[#0C141D]">{title}</p>
-        <p className="text-xs uppercase tracking-wide text-[#667085] mt-1">
-          Translation
-        </p>
+        <p className="text-xs tracking-wide text-[#667085] mt-1">Translation</p>
 
-        <p className="text-sm text-[#667085] mt-3">{desc}</p>
+        <p className="text-xs text-[#667085] mt-3">{desc}</p>
       </div>
     </Link>
   );

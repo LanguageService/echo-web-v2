@@ -33,7 +33,8 @@ export default function Sidebar() {
           <NavItem
             icon={<User size={18} />}
             label="Profile"
-            active={pathname === "/profile"}
+            href="/dashboard/profile"
+            active={pathname === "/dashboard/profile"}
           />
         </nav>
       </div>

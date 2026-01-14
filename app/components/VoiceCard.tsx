@@ -3,7 +3,35 @@
 import { ArrowLeftRight, Mic, Square } from "lucide-react";
 import { useState, useRef } from "react";
 
-export default function VoiceCard() {
+interface SelectedLanguages {
+  input: {
+    code: string;
+    name: string;
+    native_name: string;
+  };
+  output: {
+    code: string;
+    name: string;
+    native_name: string;
+  };
+}
+
+export default function VoiceCard({
+  selectedLanguages,
+}: {
+  selectedLanguages?: SelectedLanguages;
+}) {
+  const inputLang = selectedLanguages?.input || {
+    code: "en",
+    name: "English",
+    native_name: "English",
+  };
+  const outputLang = selectedLanguages?.output || {
+    code: "rw",
+    name: "Kinyarwanda",
+    native_name: "Ikinyarwanda",
+  };
+
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -85,11 +113,20 @@ export default function VoiceCard() {
 
       {/* Languages */}
       <div className="relative flex flex-col sm:flex-row items-center sm:justify-between mb-8 sm:mb-16 gap-4 sm:gap-0">
-        <Lang label="US English" sub="INPUT" color="green" />
+        <Lang
+          label={`${inputLang.code.toUpperCase()} ${inputLang.name}`}
+          sub="INPUT"
+          color="green"
+        />
         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 flex items-center justify-center">
           <ArrowLeftRight size={18} className="sm:text-base" />
         </div>
-        <Lang label="KW Kinyarwanda" sub="OUTPUT" color="orange" />
+
+        <Lang
+          label={`${outputLang.code.toUpperCase()} ${outputLang.name}`}
+          sub="OUTPUT"
+          color="orange"
+        />
       </div>
 
       {/* Center Content */}
@@ -98,7 +135,7 @@ export default function VoiceCard() {
           {isRecording
             ? "Recording..."
             : isLoading
-            ? "Processing..."
+            ? "Processing please wait..."
             : "Ready to translate"}
         </h2>
         <p className="text-gray-500 text-sm sm:text-base">
