@@ -30,7 +30,8 @@ export default function DashboardLayout({
           ${open ? "translate-x-0" : "-translate-x-72"}
         `}
       >
-        <Sidebar />
+        {/* <Sidebar /> */}
+        <Sidebar onToggle={() => setOpen(!open)} />
       </div>
 
       {/* Overlay for mobile */}

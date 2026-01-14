@@ -1,17 +1,29 @@
 "use client";
 
-import { Home, Clock, Heart, User, Star } from "lucide-react";
+import { Home, Clock, Heart, User, Star, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Sidebar() {
+// export default function Sidebar() {
+//   const pathname = usePathname();
+export default function Sidebar({ onToggle }: { onToggle: () => void }) {
   const pathname = usePathname();
 
   return (
     <aside className="w-64 bg-white border-r flex flex-col h-screen">
       {/* Top content */}
       <div className="flex-1 flex flex-col overflow-auto">
-        <div className="px-6 py-6 text-xl font-bold text-orange-500">Echo</div>
+        {/* <div className="px-6 py-6 text-xl font-bold text-orange-500">Echo</div> */}
+
+        <div className="flex items-center justify-between px-6 py-6">
+          <div className="text-xl font-bold text-orange-500">Echo</div>
+          <button
+            onClick={onToggle}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <Menu size={20} />
+          </button>
+        </div>
 
         <nav className="px-4 space-y-2">
           <NavItem
