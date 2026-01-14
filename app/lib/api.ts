@@ -129,14 +129,20 @@ export interface UserProfile {
 
 export const fetchUserProfile = async (): Promise<UserProfile> => {
   const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
   const response = await fetch(`${API_BASE_URL}/user/users/me/`, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch profile");
+    const errorData = await response.json().catch(() => ({}));
+    console.error("Profile fetch error:", response.status, errorData);
+    throw new Error(`Failed to fetch profile: ${response.status}`);
   }
   return response.json();
 };

@@ -26,9 +26,14 @@ export default function ProfilePage() {
     try {
       const data = await fetchUserProfile();
       setProfile(data);
-    } catch (error) {
-      toast.error("Failed to load profile");
-      console.error(error);
+    } catch (error: any) {
+      if (error.message.includes("No authentication token")) {
+        toast.error("Please login to view your profile");
+        router.push("/login");
+      } else {
+        toast.error("Failed to load profile");
+        console.error(error);
+      }
     } finally {
       setLoading(false);
     }
