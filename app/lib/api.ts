@@ -29,7 +29,7 @@ export interface SignUpResponse {
 }
 
 export async function loginUser(
-  credentials: LoginRequest
+  credentials: LoginRequest,
 ): Promise<LoginResponse> {
   const response = await fetch(`${API_BASE_URL}/auth/login/`, {
     method: "POST",
@@ -47,7 +47,7 @@ export async function loginUser(
 }
 
 export async function signinUser(
-  credentials: SignUpRequest
+  credentials: SignUpRequest,
 ): Promise<SignUpResponse> {
   const response = await fetch(`${API_BASE_URL}/auth/customer/user/`, {
     method: "POST",
@@ -93,8 +93,6 @@ export const fetchLanguages = async (): Promise<LanguagesResponse> => {
   }
   return response.json();
 };
-
-// Add to app/lib/api.ts
 
 export interface UserProfile {
   id: number;
@@ -149,7 +147,7 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
 
 export const updateUserProfile = async (
   id: number,
-  data: Partial<UserProfile>
+  data: Partial<UserProfile>,
 ): Promise<UserProfile> => {
   const token = localStorage.getItem("token");
   const response = await fetch(`${API_BASE_URL}/user/users/${id}/`, {
@@ -166,3 +164,48 @@ export const updateUserProfile = async (
   }
   return response.json();
 };
+
+export interface TextTranslationRequest {
+  text: string;
+  source_language: string;
+  target_language: string;
+}
+
+export interface TextTranslationResponse {
+  id: string;
+  original_text: string;
+  translated_text: string;
+  original_language: string;
+  target_language: string;
+  original_language_name: string;
+  target_language_name: string;
+  confidence_score: number;
+  total_processing_time: number;
+}
+
+export async function translateText(
+  data: TextTranslationRequest,
+): Promise<TextTranslationResponse> {
+  const token = localStorage.getItem("token");
+
+  console.log("Sending translation request:", data);
+
+  const response = await fetch(`${API_BASE_URL}/text/text/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("API Error Response:", errorText);
+    throw new Error(
+      `Translation failed: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  return response.json();
+}

@@ -2,6 +2,7 @@
 
 import { ArrowLeftRight, Mic, Square } from "lucide-react";
 import { useState, useRef } from "react";
+import TranslationResult from "@/Components/TranslationResult";
 
 interface SelectedLanguages {
   input: {
@@ -14,6 +15,20 @@ interface SelectedLanguages {
     name: string;
     native_name: string;
   };
+}
+
+interface TranslationResponse {
+  success: boolean;
+  translation_id: string;
+  original_text: string;
+  translated_text: string;
+  original_language: string;
+  target_language: string;
+  original_audio_url: string;
+  translated_audio_url: string;
+  confidence_score: number;
+  processing_time: number;
+  audio_available: boolean;
 }
 
 export default function VoiceCard({
@@ -34,6 +49,8 @@ export default function VoiceCard({
 
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [translationResult, setTranslationResult] =
+    useState<TranslationResponse | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
@@ -73,9 +90,10 @@ export default function VoiceCard({
   const uploadAudio = async (audioBlob: Blob) => {
     setIsLoading(true);
     try {
-      // Create FormData to upload the audio file
       const formData = new FormData();
       formData.append("audio_file", audioBlob, "recording.wav");
+      formData.append("source_language", inputLang.code);
+      formData.append("target_language", outputLang.code);
 
       const token = localStorage.getItem("token");
       const response = await fetch(
@@ -86,11 +104,18 @@ export default function VoiceCard({
             Authorization: `Bearer ${token}`,
           },
           body: formData,
-        }
+        },
       );
 
       const result = await response.json();
       console.log("Translation response:", result);
+
+      if (result.success) {
+        setTranslationResult(result);
+        // Auto-play translated audio
+        const audio = new Audio(result.translated_audio_url);
+        audio.play();
+      }
     } catch (error) {
       console.error("Error uploading audio:", error);
     } finally {
@@ -107,69 +132,74 @@ export default function VoiceCard({
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 lg:p-12 flex-1 relative overflow-hidden">
-      {/* Gradient edges */}
-      <div className="absolute inset-0 bg-gradient-to-r from-green-50 via-transparent to-orange-50 pointer-events-none" />
+    <div className="space-y-6">
+      <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 lg:p-12 flex-1 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-green-50 via-transparent to-orange-50 pointer-events-none" />
 
-      {/* Languages */}
-      <div className="relative flex flex-col sm:flex-row items-center sm:justify-between mb-8 sm:mb-16 gap-4 sm:gap-0">
-        <Lang
-          label={`${inputLang.code.toUpperCase()} ${inputLang.name}`}
-          sub="INPUT"
-          color="green"
-        />
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 flex items-center justify-center">
-          <ArrowLeftRight size={18} className="sm:text-base" />
+        <div className="relative flex flex-col sm:flex-row items-center sm:justify-between mb-8 sm:mb-16 gap-4 sm:gap-0">
+          <Lang
+            label={`${inputLang.code.toUpperCase()} ${inputLang.name}`}
+            sub="INPUT"
+            color="green"
+          />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 flex items-center justify-center">
+            <ArrowLeftRight size={18} className="sm:text-base" />
+          </div>
+          <Lang
+            label={`${outputLang.code.toUpperCase()} ${outputLang.name}`}
+            sub="OUTPUT"
+            color="orange"
+          />
         </div>
 
-        <Lang
-          label={`${outputLang.code.toUpperCase()} ${outputLang.name}`}
-          sub="OUTPUT"
-          color="orange"
-        />
-      </div>
-
-      {/* Center Content */}
-      <div className="relative flex flex-col items-center text-center gap-4 sm:gap-6">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
-          {isRecording
-            ? "Recording..."
-            : isLoading
-            ? "Processing please wait..."
-            : "Ready to translate"}
-        </h2>
-        <p className="text-gray-500 text-sm sm:text-base">
-          {isRecording
-            ? "Click to stop recording"
-            : "Click the microphone to start recording"}
-        </p>
-
-        {/* Mic Button */}
-        <button
-          onClick={handleMicClick}
-          disabled={isLoading}
-          className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl hover:scale-105 transition ${
-            isRecording
-              ? "bg-red-500 shadow-red-300"
+        <div className="relative flex flex-col items-center text-center gap-4 sm:gap-6">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
+            {isRecording
+              ? "Recording..."
               : isLoading
-              ? "bg-gray-400"
-              : "bg-green-500 shadow-green-300"
-          }`}
-        >
-          {isRecording ? (
-            <Square size={32} className="sm:w-10 sm:h-10" />
-          ) : (
-            <Mic size={32} className="sm:w-10 sm:h-10" />
-          )}
-        </button>
+                ? "Processing please wait..."
+                : "Ready to translate"}
+          </h2>
+          <p className="text-gray-500 text-sm sm:text-base">
+            {isRecording
+              ? "Click to stop recording"
+              : "Click the microphone to start recording"}
+          </p>
 
-        <span className="text-xs sm:text-sm text-gray-400 mt-2 sm:mt-4">
-          <kbd className="px-2 py-1 bg-gray-200 rounded-md text-gray-600">
-            Space
-          </kbd>{" "}
-          to speak
-        </span>
+          <button
+            onClick={handleMicClick}
+            disabled={isLoading}
+            className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl hover:scale-105 transition ${
+              isRecording
+                ? "bg-red-500 shadow-red-300"
+                : isLoading
+                  ? "bg-gray-400"
+                  : "bg-green-500 shadow-green-300"
+            }`}
+          >
+            {isRecording ? (
+              <Square size={32} className="sm:w-10 sm:h-10" />
+            ) : (
+              <Mic size={32} className="sm:w-10 sm:h-10" />
+            )}
+          </button>
+
+          <span className="text-xs sm:text-sm text-gray-400 mt-2 sm:mt-4">
+            <kbd className="px-2 py-1 bg-gray-200 rounded-md text-gray-600">
+              Space
+            </kbd>{" "}
+            to speak
+          </span>
+        </div>
       </div>
+
+      {translationResult && (
+        <TranslationResult
+          result={translationResult}
+          inputLang={inputLang}
+          outputLang={outputLang}
+        />
+      )}
     </div>
   );
 }
