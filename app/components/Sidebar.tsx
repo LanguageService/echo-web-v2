@@ -8,7 +8,7 @@ export default function Sidebar({ onToggle }: { onToggle: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className=" bg-white flex flex-col h-screen">
+    <aside className=" bg-white flex flex-col">
       {/* <aside className="w-64 bg-white border-r border-[#b9ced5] flex flex-col h-screen"> */}
       {/* Top content */}
       <div className="flex-1 flex flex-col overflow-auto">

@@ -25,7 +25,7 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <div
         className={`
-          fixed z-40 inset-y-0 left-0 w-72 bg-white border-r
+          fixed z-40 inset-y-0 left-0 w-72 bg-white border-r border-[#b9ced5]
           transform transition-transform duration-300 ease-in-out
           ${open ? "translate-x-0" : "-translate-x-72"}
         `}
