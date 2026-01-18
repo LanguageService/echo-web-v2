@@ -4,7 +4,13 @@ import { Home, Clock, Heart, User, Star, Settings, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function Sidebar({ onToggle }: { onToggle: () => void }) {
+export default function Sidebar({
+  onToggle,
+  onItemClick,
+}: {
+  onToggle: () => void;
+  onItemClick?: () => void;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -28,28 +34,33 @@ export default function Sidebar({ onToggle }: { onToggle: () => void }) {
             label="Home"
             href="/dashboard"
             active={pathname === "/dashboard"}
+            onClick={onItemClick}
           />
           <NavItem
             icon={<Clock size={18} />}
             label="History"
             active={pathname === "/history"}
+            onClick={onItemClick}
           />
           <NavItem
             icon={<Heart size={18} />}
             label="Favourites"
             active={pathname === "/favourites"}
+            onClick={onItemClick}
           />
           <NavItem
             icon={<Settings size={18} />}
             label="Settings"
             href="/dashboard/settings"
             active={pathname === "/dashboard/settings"}
+            onClick={onItemClick}
           />
           <NavItem
             icon={<User size={18} />}
             label="Profile"
             href="/dashboard/profile"
             active={pathname === "/dashboard/profile"}
+            onClick={onItemClick}
           />
         </nav>
       </div>
@@ -73,11 +84,13 @@ function NavItem({
   label,
   active = false,
   href,
+  onClick,
 }: {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
   href?: string;
+  onClick?: () => void;
 }) {
   const content = (
     <div
@@ -86,6 +99,7 @@ function NavItem({
           ? "bg-orange-50 text-orange-500"
           : "text-gray-600 hover:bg-gray-100"
       }`}
+      onClick={onClick}
     >
       {icon}
       <span className="font-medium">{label}</span>

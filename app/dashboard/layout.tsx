@@ -18,7 +18,22 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setOpen(true);
+      } else {
+        setOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const router = useRouter();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,7 +54,10 @@ export default function DashboardLayout({
         `}
       >
         {/* <Sidebar /> */}
-        <Sidebar onToggle={() => setOpen(!open)} />
+        <Sidebar
+          onToggle={() => setOpen(!open)}
+          onItemClick={() => setOpen(false)}
+        />
       </div>
 
       {/* Overlay for mobile */}
