@@ -48,7 +48,8 @@ export default function Sidebar({
           <NavItem
             icon={<Clock size={18} />}
             label="History"
-            active={pathname === "/history"}
+            href="/dashboard/history"
+            active={pathname === "/dashboard/history"}
             onClick={onItemClick}
           />
           <NavItem
@@ -121,7 +122,6 @@ function NavItem({
           ? "bg-orange-50 text-orange-500"
           : "text-gray-600 hover:bg-gray-100"
       }`}
-      // onClick={onClick}
       onClick={handleClick}
     >
       {icon}

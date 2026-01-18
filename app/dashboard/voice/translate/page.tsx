@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import VoiceCard from "@/components/VoiceCard";
-import RecentTranslations from "@/components/RecentTranslations";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Clock, ArrowRight } from "lucide-react";

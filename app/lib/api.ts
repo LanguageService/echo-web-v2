@@ -374,3 +374,46 @@ export async function changePassword(
     throw new Error("Failed to change password");
   }
 }
+
+// all history
+
+export interface RecentTranslationsResponse {
+  count: number;
+  offset: number;
+  limit: number;
+  results: GeneralVoiceTranslationHistory[];
+}
+
+export interface GeneralVoiceTranslationHistory {
+  id: string;
+  original_text: string;
+  translated_text: string;
+  original_language: string;
+  target_language: string;
+  original_language_name: string;
+  target_language_name: string;
+  original_audio_url: string | null;
+  translated_audio_url: string | null;
+  confidence_score: number;
+  total_processing_time: number;
+  session_id: string | null;
+  date_created: string;
+  last_modified: string;
+  audio_files: any[];
+  feature_type: string;
+}
+
+export async function fetchRecentTranslations(): Promise<RecentTranslationsResponse> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/translations/recent`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch recent translations");
+  }
+
+  return response.json();
+}
