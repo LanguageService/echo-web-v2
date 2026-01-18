@@ -92,6 +92,12 @@ function NavItem({
   href?: string;
   onClick?: () => void;
 }) {
+  const handleClick = () => {
+    // Only close sidebar on mobile (screen width < 768px)
+    if (window.innerWidth < 768) {
+      onClick?.();
+    }
+  };
   const content = (
     <div
       className={`flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer ${
@@ -99,7 +105,8 @@ function NavItem({
           ? "bg-orange-50 text-orange-500"
           : "text-gray-600 hover:bg-gray-100"
       }`}
-      onClick={onClick}
+      // onClick={onClick}
+      onClick={handleClick}
     >
       {icon}
       <span className="font-medium">{label}</span>

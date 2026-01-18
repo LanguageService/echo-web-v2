@@ -99,7 +99,7 @@ export default function SettingsPage() {
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
           Settings
         </h1>
-        <button
+        {/* <button
           onClick={handleSave}
           disabled={saving}
           className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base"
@@ -110,7 +110,7 @@ export default function SettingsPage() {
             <Save className="w-4 h-4" />
           )}
           {saving ? "Saving..." : "Save Changes"}
-        </button>
+        </button> */}
       </div>
 
       <div className="grid gap-4 sm:gap-6">
