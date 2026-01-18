@@ -13,12 +13,6 @@ export default function Sidebar({ onToggle }: { onToggle: () => void }) {
       <div className="flex-1 flex flex-col overflow-auto">
         <div className="flex items-center justify-between px-6 py-6">
           <div className="text-xl font-bold text-orange-500">Echo</div>
-          <button
-            onClick={onToggle}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <Menu size={20} />
-          </button>
         </div>
 
         <nav className="px-4 space-y-2">

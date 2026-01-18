@@ -1,9 +1,17 @@
 "use client";
-import { Moon } from "lucide-react";
+import { Moon, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import { toast } from "react-toastify";
+
+interface ProfileHeaderProps {
+  firstName: string;
+  lastName: string;
+  email: string;
+  profilePicture: string | null;
+  onMenuToggle?: () => void;
+}
 
 export default function DashboardLayout({
   children,
@@ -50,8 +58,13 @@ export default function DashboardLayout({
         `}
       >
         {/* Top bar */}
-
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 border-b border-[#b9ced5] bg-white z-50">
+          <button
+            onClick={() => setOpen(!open)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <Menu size={20} />
+          </button>
           {/* User */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#F2F4F7] flex items-center justify-center">

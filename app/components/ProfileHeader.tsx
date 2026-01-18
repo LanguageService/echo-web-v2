@@ -1,4 +1,4 @@
-import { Camera } from "lucide-react";
+import { Camera, Menu } from "lucide-react";
 
 interface ProfileHeaderProps {
   firstName: string;
