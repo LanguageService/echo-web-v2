@@ -205,19 +205,18 @@ export default function Login() {
                 <Button type="submit" disabled={isLoading}>
                   {isLoading ? "Signing up..." : "Sign Up"}
                 </Button>
-
-                <div className="text-center text-sm text-muted-foreground">
-                  Already have an account?{" "}
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto font-semibold text-primary"
-                    onClick={() => router.push("/login")}
-                  >
-                    Login
-                  </Button>
-                </div>
               </form>
             </Form>
+
+            <p className="text-center pt-5 text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <button
+                onClick={() => router.push("/login")}
+                className="text-primary font-semibold underline hover:no-underline"
+              >
+                Login
+              </button>
+            </p>
             <div className="mt-8 flex items-center">
               <hr className="flex-grow border-gray-300" />
               <span className="mx-4 text-sm text-[#4D6680] whitespace-nowrap">
