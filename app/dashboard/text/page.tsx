@@ -162,7 +162,7 @@ export default function TextTranslation({
           </h3>
           <button
             onClick={() => router.push("/dashboard/text/history")}
-            className="flex items-center gap-2 text-orange-500 hover:text-orange-600 font-medium"
+            className="cursor-pointer flex items-center gap-2 text-orange-500 hover:text-orange-600 font-medium"
           >
             View All
             <ArrowRight className="w-4 h-4" />
@@ -180,70 +180,84 @@ export default function TextTranslation({
             {history.map((item) => (
               <div
                 key={item.id}
-                className="border border-[#b9ced5] rounded-lg p-4 hover:bg-gray-50 transition"
+                className="bg-white border border-[#b9ced5] rounded-xl p-4 sm:p-6 hover:shadow-md transition"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                    <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
                       {item.original_language_name}
                     </span>
-                    <ArrowRight className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                    <ArrowRight className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">
                       {item.target_language_name}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-500">
-                    {formatDate(item.date_created)}
-                  </span>
+                  <div className="flex flex-col sm:items-end gap-1">
+                    <span className="text-sm text-gray-500">
+                      {formatDate(item.date_created)}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {item.total_processing_time.toFixed(2)}s processing time
+                    </span>
+                  </div>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Original</p>
-                    <p className="text-sm line-clamp-2 mb-3">
-                      {item.original_text}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-orange-500 transition-colors">
-                        <Mic size={14} />
-                        Listen
-                      </button>
-                      <button
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(
-                            item.original_text,
-                          );
-                          toast("Text copied successfully!");
-                        }}
-                        className="flex items-center gap-1 text-xs text-gray-500 hover:text-orange-500 transition-colors"
-                      >
-                        <Copy size={14} />
-                        Copy
-                      </button>
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <h4 className="font-bold text-gray-700">Original Text</h4>
+                    <div className="bg-blue-50 border border-blue-700 rounded-lg p-4">
+                      <p className="text-gray-800 text-justify leading-relaxed mb-3  max-h-[120px] min-h-[60px] overflow-y-auto">
+                        {item.original_text}
+                      </p>
+
+                      <hr className="my-5 text-[#b9ced5]" />
+
+                      <div className="flex justify-between items-center">
+                        <button className="border rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 hover:text-orange-500 transition-colors">
+                          <Mic size={16} />
+                          Listen
+                        </button>
+                        <button
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(
+                              item.original_text,
+                            );
+                            toast("Text copied successfully!");
+                          }}
+                          className="border rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 hover:text-orange-500 transition-colors"
+                        >
+                          <Copy size={16} />
+                          Copy
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Translation</p>
-                    <p className="text-sm line-clamp-2 mb-3">
-                      {item.translated_text}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <button className="flex items-center gap-1 text-xs text-gray-500 hover:text-orange-500 transition-colors">
-                        <Mic size={14} />
-                        Listen
-                      </button>
-                      <button
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(
-                            item.translated_text,
-                          );
-                          toast("Text copied successfully!");
-                        }}
-                        className="flex items-center gap-1 text-xs text-gray-500 hover:text-orange-500 transition-colors"
-                      >
-                        <Copy size={14} />
-                        Copy
-                      </button>
+                  <div className="space-y-2">
+                    <h4 className="font-bold text-gray-700">Translation</h4>
+                    <div className="bg-green-50 border border-green-700 rounded-lg p-4">
+                      <p className="text-gray-800 text-justify leading-relaxed mb-3 max-h-[120px] min-h-[60px] overflow-y-auto">
+                        {item.translated_text}
+                      </p>
+                      <hr className="my-5 text-[#b9ced5]" />
+
+                      <div className="flex justify-between items-center">
+                        <button className=" border rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 hover:text-orange-500 transition-colors">
+                          <Mic size={16} />
+                          Listen
+                        </button>
+                        <button
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(
+                              item.translated_text,
+                            );
+                            toast("Text copied successfully!");
+                          }}
+                          className="border rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 hover:text-orange-500 transition-colors"
+                        >
+                          <Copy size={16} />
+                          Copy
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

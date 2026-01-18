@@ -66,7 +66,7 @@ export default function LangCard({
             Change {type.split(" ")[0]}
           </p>
           <div
-            className="border rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer"
+            className="border border-[#b9ced5] rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer"
             onClick={() => setIsOpen(!isOpen)}
           >
             <span>{value}</span>

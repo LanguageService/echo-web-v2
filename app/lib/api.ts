@@ -239,3 +239,65 @@ export async function fetchTranslationHistory(): Promise<TranslationHistory[]> {
 
   return response.json();
 }
+
+// settings api
+export interface UserSettings {
+  model: string;
+  voice: string;
+  autoplay: boolean;
+  auto_detect_language: boolean;
+  super_fast_mode: boolean;
+  source_language: string;
+  target_language: string;
+  theme: string;
+  audio_quality: string;
+  date_created: string;
+  last_modified: string;
+}
+
+export interface UpdateSettingsRequest {
+  model: string;
+  voice: string;
+  autoplay: boolean;
+  auto_detect_language: boolean;
+  super_fast_mode: boolean;
+  source_language: string;
+  target_language: string;
+  theme: string;
+  audio_quality: string;
+}
+
+export async function fetchUserSettings(): Promise<UserSettings> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/voice/settings/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch settings");
+  }
+
+  return response.json();
+}
+
+export async function updateUserSettings(
+  settings: UpdateSettingsRequest,
+): Promise<UserSettings> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/voice/settings/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(settings),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update settings");
+  }
+
+  return response.json();
+}
