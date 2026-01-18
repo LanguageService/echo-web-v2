@@ -4,17 +4,15 @@ import { Home, Clock, Heart, User, Star, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// export default function Sidebar() {
-//   const pathname = usePathname();
 export default function Sidebar({ onToggle }: { onToggle: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 bg-white border-r flex flex-col h-screen">
+    <aside className=" bg-white flex flex-col h-screen">
+      {/* <aside className="w-64 bg-white border-r border-[#b9ced5] flex flex-col h-screen"> */}
       {/* Top content */}
       <div className="flex-1 flex flex-col overflow-auto">
         {/* <div className="px-6 py-6 text-xl font-bold text-orange-500">Echo</div> */}
-
         <div className="flex items-center justify-between px-6 py-6">
           <div className="text-xl font-bold text-orange-500">Echo</div>
           <button

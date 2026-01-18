@@ -73,7 +73,8 @@ body {
 
 /* African geometric pattern */
 .african-geometric-pattern {
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       circle at 25% 25%,
       rgba(240, 196, 66, 0.08) 2px,
       transparent 2px
@@ -164,7 +165,8 @@ body {
   }
 
   .african-geometric-pattern {
-    background-image: radial-gradient(
+    background-image:
+      radial-gradient(
         circle at 25% 25%,
         hsl(45, 85%, 60%, 0.08) 2px,
         transparent 2px
@@ -178,7 +180,8 @@ body {
   }
 
   .african-waves-pattern {
-    background-image: repeating-linear-gradient(
+    background-image:
+      repeating-linear-gradient(
         90deg,
         transparent,
         transparent 4px,
@@ -461,4 +464,19 @@ body {
   20% {
     height: 32px;
   }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }

@@ -10,7 +10,7 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(true); // default open on desktop
+  const [open, setOpen] = useState(true);
   const router = useRouter();
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -51,7 +51,7 @@ export default function DashboardLayout({
       >
         {/* Top bar */}
 
-        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 border-b bg-white z-50">
+        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 border-b border-[#b9ced5] bg-white z-50">
           {/* User */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#F2F4F7] flex items-center justify-center">

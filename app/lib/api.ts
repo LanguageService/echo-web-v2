@@ -209,3 +209,33 @@ export async function translateText(
 
   return response.json();
 }
+
+// text translation history
+export interface TranslationHistory {
+  id: string;
+  original_text: string;
+  translated_text: string;
+  original_language: string;
+  target_language: string;
+  original_language_name: string;
+  target_language_name: string;
+  confidence_score: number;
+  total_processing_time: number;
+  date_created: string;
+  last_modified: string;
+}
+
+export async function fetchTranslationHistory(): Promise<TranslationHistory[]> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/text/text`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch translation history");
+  }
+
+  return response.json();
+}

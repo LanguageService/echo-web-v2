@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeftRight, ChevronDown } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { fetchLanguages, type Language } from "@/lib/api";
 
 interface LanguageSwitcherProps {
@@ -36,23 +36,31 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
     };
 
     loadLanguages();
-  }, [onLanguageChange]);
+  }, []); // Remove onLanguageChange from dependencies
 
-  const handleInputLanguageSelect = (lang: Language) => {
-    setInputLang(lang);
-    setShowInputDropdown(false);
-    if (outputLang) {
-      onLanguageChange?.(lang, outputLang);
-    }
-  };
+  const handleInputLanguageSelect = useCallback(
+    (lang: Language) => {
+      console.log("Input language selected:", lang);
+      setInputLang(lang);
+      setShowInputDropdown(false);
+      if (outputLang) {
+        onLanguageChange?.(lang, outputLang);
+      }
+    },
+    [outputLang, onLanguageChange],
+  );
 
-  const handleOutputLanguageSelect = (lang: Language) => {
-    setOutputLang(lang);
-    setShowOutputDropdown(false);
-    if (inputLang) {
-      onLanguageChange?.(inputLang, lang);
-    }
-  };
+  const handleOutputLanguageSelect = useCallback(
+    (lang: Language) => {
+      console.log("Output language selected:", lang);
+      setOutputLang(lang);
+      setShowOutputDropdown(false);
+      if (inputLang) {
+        onLanguageChange?.(inputLang, lang);
+      }
+    },
+    [inputLang, onLanguageChange],
+  );
 
   const swapLanguages = () => {
     if (inputLang && outputLang) {
@@ -67,11 +75,14 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
   }
 
   return (
-    <div className="bg-white p-4 rounded-xl border flex items-center justify-center gap-4">
+    <div className="bg-white p-4 rounded-xl border border-[#b9ced5] flex items-center justify-center gap-4">
       <Language
         label={`${inputLang.flag_emoji} ${inputLang.name}`}
         isOpen={showInputDropdown}
-        onToggle={() => setShowInputDropdown(!showInputDropdown)}
+        onToggle={() => {
+          setShowInputDropdown(!showInputDropdown);
+          setShowOutputDropdown(false);
+        }}
         onSelect={handleInputLanguageSelect}
         languages={languages}
       />
@@ -87,7 +98,10 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
         label={`${outputLang.flag_emoji} ${outputLang.name}`}
         orange
         isOpen={showOutputDropdown}
-        onToggle={() => setShowOutputDropdown(!showOutputDropdown)}
+        onToggle={() => {
+          setShowOutputDropdown(!showOutputDropdown);
+          setShowInputDropdown(false);
+        }}
         onSelect={handleOutputLanguageSelect}
         languages={languages}
       />
@@ -123,12 +137,15 @@ function Language({
       </button>
 
       {isOpen && languages && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg max-h-48 overflow-y-auto z-10 min-w-[200px]">
+        <div className="absolute top-full left-0 mt-1 bg-white border rounded-lg shadow-lg max-h-48 overflow-y-auto z-50 min-w-[250px]">
           {languages.map((lang) => (
             <button
               key={lang.code}
-              onClick={() => onSelect?.(lang)}
-              className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm flex items-center gap-2"
+              onClick={() => {
+                console.log("Language clicked:", lang);
+                onSelect?.(lang);
+              }}
+              className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm flex items-center gap-2 border-b border-gray-100 last:border-b-0"
             >
               <span>{lang.flag_emoji}</span>
               <span>{lang.name}</span>
