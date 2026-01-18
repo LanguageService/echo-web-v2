@@ -4,8 +4,9 @@ import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import VoiceCard from "@/components/VoiceCard";
 import RecentTranslations from "@/components/RecentTranslations";
+import { Suspense } from "react";
 
-export default function TranslatePage() {
+function TranslatePage() {
   const searchParams = useSearchParams();
 
   const selectedLanguages = {
@@ -41,5 +42,13 @@ export default function TranslatePage() {
         🌙
       </button>
     </>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TranslatePage />
+    </Suspense>
   );
 }
