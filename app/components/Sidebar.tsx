@@ -2,10 +2,17 @@
 
 import { Home, Clock, Heart, User, Star, Settings, Menu } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Sidebar({ onToggle }: { onToggle: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    router.push("/login");
+  };
 
   return (
     <aside className=" bg-white flex flex-col h-screen">
@@ -49,9 +56,12 @@ export default function Sidebar({ onToggle }: { onToggle: () => void }) {
 
       {/* Bottom content */}
       <div className="p-4">
-        <button className="w-full bg-orange-500 text-white py-3 rounded-xl flex items-center justify-center gap-2">
+        <button
+          onClick={handleLogout}
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl flex items-center justify-center gap-2 transition-colors"
+        >
           <Star size={18} />
-          Upgrade Premium
+          Logout
         </button>
       </div>
     </aside>
