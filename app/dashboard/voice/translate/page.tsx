@@ -4,16 +4,47 @@ import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import VoiceCard from "@/components/VoiceCard";
 import RecentTranslations from "@/components/RecentTranslations";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Clock, ArrowRight } from "lucide-react";
 import { Volume2, Mic, Copy, Share2, Heart } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
+import {
+  fetchVoiceTranslationHistory,
+  type VoiceTranslationHistory,
+} from "@/lib/api";
 
 function TranslatePage() {
   const router = useRouter();
   const { toast, toasts } = useToast();
   const searchParams = useSearchParams();
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  // Add state
+  const [history, setHistory] = useState<VoiceTranslationHistory[]>([]);
+
+  // Add useEffect to load history
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  const loadHistory = async () => {
+    try {
+      const historyData = await fetchVoiceTranslationHistory();
+      setHistory(historyData);
+    } catch (error) {
+      console.error("Failed to load voice history:", error);
+    }
+  };
 
   const selectedLanguages = {
     input: {
@@ -30,20 +61,20 @@ function TranslatePage() {
   return (
     <>
       {/* <Header /> */}
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12">
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+        <div className="">
+          {/* <div className="flex flex-col md:flex-row gap-6 md:gap-8"> */}
           <VoiceCard selectedLanguages={selectedLanguages} />
-          <RecentTranslations />
+          {/* <RecentTranslations /> */}
         </div>
         {/* Translation History */}
-        <div className="bg-white rounded-2xl border border-[#b9ced5] p-4 sm:p-6">
+        <div className="bg-white rounded-2xl mt-[80px] border border-[#b9ced5] p-4 sm:p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-gray-800">
               Recent Translations
             </h3>
             <button
-              onClick={() => router.push("/dashboard/text/history")}
+              onClick={() => router.push("/dashboard/voice/history")}
               className="cursor-pointer flex items-center gap-2 text-orange-500 hover:text-orange-600 font-medium"
             >
               View All
@@ -61,7 +92,7 @@ function TranslatePage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {/* {history.map((item) => (
+              {history.map((item) => (
                 <div
                   key={item.id}
                   className="bg-white border border-[#b9ced5] rounded-xl p-4 sm:p-6 hover:shadow-md transition"
@@ -146,7 +177,7 @@ function TranslatePage() {
                     </div>
                   </div>
                 </div>
-              ))} */}
+              ))}
             </div>
           )}
         </div>

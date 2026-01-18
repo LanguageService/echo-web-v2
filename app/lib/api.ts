@@ -301,3 +301,76 @@ export async function updateUserSettings(
 
   return response.json();
 }
+
+// voice translation history
+export interface VoiceTranslationHistory {
+  id: string;
+  original_text: string;
+  translated_text: string;
+  original_language: string;
+  target_language: string;
+  original_language_name: string;
+  target_language_name: string;
+  original_audio_url: string;
+  translated_audio_url: string;
+  confidence_score: number;
+  total_processing_time: number;
+  session_id: string;
+  date_created: string;
+  last_modified: string;
+  audio_files: any[];
+}
+
+export async function fetchVoiceTranslationHistory(): Promise<
+  VoiceTranslationHistory[]
+> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/voice/translations/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch voice translation history");
+  }
+
+  const data = await response.json();
+
+  // Handle different response structures
+  if (Array.isArray(data)) {
+    return data;
+  } else if (data.results && Array.isArray(data.results)) {
+    return data.results;
+  } else if (data.translations && Array.isArray(data.translations)) {
+    return data.translations;
+  } else {
+    console.log("API Response:", data);
+    return [];
+  }
+}
+
+// change password
+
+export interface ChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+}
+
+export async function changePassword(
+  data: ChangePasswordRequest,
+): Promise<void> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/auth/change-password/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to change password");
+  }
+}

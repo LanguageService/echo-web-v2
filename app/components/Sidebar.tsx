@@ -1,6 +1,15 @@
 "use client";
 
-import { Home, Clock, Heart, User, Star, Settings, Menu } from "lucide-react";
+import {
+  Home,
+  Clock,
+  Heart,
+  User,
+  Star,
+  Settings,
+  Menu,
+  Shield,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -53,6 +62,13 @@ export default function Sidebar({
             label="Settings"
             href="/dashboard/settings"
             active={pathname === "/dashboard/settings"}
+            onClick={onItemClick}
+          />
+          <NavItem
+            icon={<Shield size={18} />}
+            label="Security"
+            href="/dashboard/security"
+            active={pathname === "/dashboard/security"}
             onClick={onItemClick}
           />
           <NavItem
