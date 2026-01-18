@@ -39,12 +39,12 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSave = async (data: Partial<UserProfile>) => {
+  const handleSave = async (formData: FormData) => {
     if (!profile) return;
 
     setSaving(true);
     try {
-      const updated = await updateUserProfile(profile.id, data);
+      const updated = await updateUserProfile(profile.id, formData);
       setProfile(updated);
       toast.success("Profile updated successfully");
     } catch (error) {
@@ -87,6 +87,7 @@ export default function ProfilePage() {
         lastName={profile.last_name}
         email={profile.email}
         profilePicture={profile.profile_picture}
+        userId={profile.id}
       />
 
       <ProfileStats

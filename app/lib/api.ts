@@ -145,25 +145,25 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
   return response.json();
 };
 
-export const updateUserProfile = async (
+export async function updateUserProfile(
   id: number,
-  data: Partial<UserProfile>,
-): Promise<UserProfile> => {
+  data: FormData,
+): Promise<UserProfile> {
   const token = localStorage.getItem("token");
   const response = await fetch(`${API_BASE_URL}/user/users/${id}/`, {
     method: "PATCH",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(data),
+    body: data,
   });
 
   if (!response.ok) {
     throw new Error("Failed to update profile");
   }
+
   return response.json();
-};
+}
 
 export interface TextTranslationRequest {
   text: string;

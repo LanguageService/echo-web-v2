@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { UserProfile } from "@/lib/api";
+import { Camera } from "lucide-react";
 
 interface ProfileFormProps {
   profile: UserProfile;
-  onSave: (data: Partial<UserProfile>) => void;
+  onSave: (data: FormData) => void;
   isLoading: boolean;
 }
 
@@ -31,15 +32,42 @@ export default function ProfileForm({
     occupation: profile.occupation || "",
   });
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+
+    const submitData = new FormData();
+
+    // Add all form fields
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value) {
+        submitData.append(key, value);
+      }
+    });
+
+    // Add profile picture if selected
+    if (selectedFile) {
+      submitData.append("profile_picture", selectedFile);
+    }
+
+    onSave(submitData);
   };
 
   return (
@@ -196,7 +224,6 @@ export default function ProfileForm({
       <div className="flex justify-end gap-4">
         <Button
           type="button"
-          //   variant="outline"
           variant="ghost"
           className="px-6"
           onClick={() => window.location.reload()}
