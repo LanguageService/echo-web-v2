@@ -1,9 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import Header from "@/Components/Header";
-import VoiceCard from "@/Components/VoiceCard";
-import RecentTranslations from "@/Components/RecentTranslations";
+import Header from "@/components/Header";
+import VoiceCard from "@/components/VoiceCard";
+import RecentTranslations from "@/components/RecentTranslations";
 
 export default function TranslatePage() {
   const searchParams = useSearchParams();

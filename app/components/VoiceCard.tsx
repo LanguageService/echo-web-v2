@@ -2,7 +2,7 @@
 
 import { ArrowLeftRight, Mic, Square } from "lucide-react";
 import { useState, useRef } from "react";
-import TranslationResult from "@/Components/TranslationResult";
+import TranslationResult from "@/components/TranslationResult";
 
 interface SelectedLanguages {
   input: {

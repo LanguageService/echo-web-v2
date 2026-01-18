@@ -1,8 +1,8 @@
-import NavBar from "./Components/NavBar";
-import Hero from "./Components/Hero";
-import Pricing from "./Components/Pricing";
-import Languages from "./Components/Languages";
-import Footer from "./Components/Footer";
+import NavBar from "./components/NavBar";
+import Hero from "./components/Hero";
+import Pricing from "./components/Pricing";
+import Languages from "./components/Languages";
+import Footer from "./components/Footer";
 
 export default function HomePage() {
   return (

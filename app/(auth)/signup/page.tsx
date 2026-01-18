@@ -4,15 +4,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Button } from "@/Components/ui/Button";
-import { Input } from "@/Components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/Card";
+} from "@/components/ui/Card";
 import {
   Form,
   FormControl,
@@ -20,7 +20,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/Components/ui/Form";
+} from "@/components/ui/Form";
 import { LogIn, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { loginUser, type LoginRequest } from "@/lib/api";
 import { z } from "zod";

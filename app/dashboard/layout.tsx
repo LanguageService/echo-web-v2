@@ -2,7 +2,7 @@
 import { Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/Components/Sidebar";
+import Sidebar from "@/components/Sidebar";
 import { toast } from "react-toastify";
 
 export default function DashboardLayout({

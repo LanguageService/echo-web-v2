@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/Components/ui/Input";
-import { Button } from "@/Components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { UserProfile } from "@/lib/api";
 
 interface ProfileFormProps {

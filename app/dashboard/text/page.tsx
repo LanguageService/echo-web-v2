@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import TranslationCard from "@/Components/TranslationCard";
-import LanguageSwitcher from "@/Components/LanguageSwitcher";
+import TranslationCard from "@/components/TranslationCard";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import {
   translateText,
   fetchTranslationHistory,

@@ -8,9 +8,9 @@ import {
   updateUserProfile,
   type UserProfile,
 } from "@/lib/api";
-import ProfileHeader from "@/Components/ProfileHeader";
-import ProfileStats from "@/Components/ProfileStats";
-import ProfileForm from "@/Components/ProfileForm";
+import ProfileHeader from "@/components/ProfileHeader";
+import ProfileStats from "@/components/ProfileStats";
+import ProfileForm from "@/components/ProfileForm";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);

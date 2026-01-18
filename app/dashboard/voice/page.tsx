@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { languages, popularLanguages } from "@/lib/languages";
 import { fetchLanguages, type Language } from "@/lib/api";
-import Badge from "@/Components/Badge";
-import LangCard from "@/Components/LangCard";
+import Badge from "@/components/Badge";
+import LangCard from "@/components/LangCard";
 
 export default function LanguageSelection() {
   const [languages, setLanguages] = useState<Language[]>([]);
