@@ -76,7 +76,7 @@ export default function DashboardLayout({
         `}
       >
         {/* Top bar */}
-        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 border-b border-[#b9ced5] bg-white z-50">
+        <div className="sticky top-0 flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 border-b border-[#b9ced5] bg-white z-50">
           <button
             onClick={() => setOpen(!open)}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
