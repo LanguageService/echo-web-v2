@@ -54,12 +54,86 @@ export default function VoiceCard({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
+  const [audioLevel, setAudioLevel] = useState(0);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const animationFrameRef = useRef<number | undefined>(undefined);
+
+  function WaveAnimation({ audioLevel }: { audioLevel: number }) {
+    const bars = [0.7, 1, 0.8, 1.2, 0.9, 1.1, 0.6, 1.3, 0.8, 1, 0.7];
+
+    return (
+      <div className="flex items-end justify-center gap-1 h-16 mt-6">
+        {bars.map((baseHeight, index) => (
+          <div
+            key={index}
+            className="bg-gradient-to-t from-red-500 to-red-300 rounded-full transition-all duration-75 animate-pulse"
+            style={{
+              width: "6px",
+              height: `${Math.max(8, (audioLevel / 255) * 64 * baseHeight)}px`,
+              animationDelay: `${index * 0.05}s`,
+              transform: `scaleY(${1 + (audioLevel / 255) * 2})`,
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // const startRecording = async () => {
+  //   try {
+  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     const mediaRecorder = new MediaRecorder(stream);
+  //     mediaRecorderRef.current = mediaRecorder;
+  //     audioChunksRef.current = [];
+
+  //     mediaRecorder.ondataavailable = (event) => {
+  //       audioChunksRef.current.push(event.data);
+  //     };
+
+  //     mediaRecorder.onstop = async () => {
+  //       const audioBlob = new Blob(audioChunksRef.current, {
+  //         type: "audio/wav",
+  //       });
+  //       await uploadAudio(audioBlob);
+  //       stream.getTracks().forEach((track) => track.stop());
+  //     };
+
+  //     mediaRecorder.start();
+  //     setIsRecording(true);
+  //   } catch (error) {
+  //     console.error("Error accessing microphone:", error);
+  //   }
+  // };
+
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
+
+      // Set up audio analysis for wave animation
+      const audioContext = new AudioContext();
+      const analyser = audioContext.createAnalyser();
+      const microphone = audioContext.createMediaStreamSource(stream);
+
+      analyser.fftSize = 256;
+      microphone.connect(analyser);
+      analyserRef.current = analyser;
+
+      // Start audio level monitoring
+      const updateAudioLevel = () => {
+        if (analyserRef.current) {
+          const dataArray = new Uint8Array(
+            analyserRef.current.frequencyBinCount,
+          );
+          analyserRef.current.getByteFrequencyData(dataArray);
+          const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+          setAudioLevel(average);
+          animationFrameRef.current = requestAnimationFrame(updateAudioLevel);
+        }
+      };
+      updateAudioLevel();
 
       mediaRecorder.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
@@ -71,6 +145,12 @@ export default function VoiceCard({
         });
         await uploadAudio(audioBlob);
         stream.getTracks().forEach((track) => track.stop());
+
+        // Clean up audio analysis
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+        setAudioLevel(0);
       };
 
       mediaRecorder.start();
@@ -79,7 +159,6 @@ export default function VoiceCard({
       console.error("Error accessing microphone:", error);
     }
   };
-
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
@@ -166,7 +245,7 @@ export default function VoiceCard({
               : "Click the microphone to start recording"}
           </p>
 
-          <button
+          {/* <button
             onClick={handleMicClick}
             disabled={isLoading}
             className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl hover:scale-105 transition ${
@@ -182,7 +261,43 @@ export default function VoiceCard({
             ) : (
               <Mic size={32} className="sm:w-10 sm:h-10" />
             )}
-          </button>
+          </button> */}
+
+          <div className="flex flex-col items-center">
+            <button
+              onClick={handleMicClick}
+              disabled={isLoading}
+              className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl transition-all duration-75 ${
+                isRecording
+                  ? "bg-red-500 shadow-red-300 animate-pulse"
+                  : isLoading
+                    ? "bg-gray-400"
+                    : "bg-green-500 shadow-green-300 hover:scale-110"
+              }`}
+              style={{
+                transform: isRecording
+                  ? `scale(${1.1 + (audioLevel / 255) * 0.8}) rotate(${(audioLevel / 255) * 10 - 5}deg)`
+                  : "scale(1)",
+                boxShadow: isRecording
+                  ? `0 0 ${20 + (audioLevel / 255) * 40}px rgba(239, 68, 68, 0.6)`
+                  : undefined,
+              }}
+            >
+              {isRecording ? (
+                <Square
+                  size={32}
+                  className="sm:w-10 sm:h-10"
+                  style={{
+                    transform: `scale(${1 + (audioLevel / 255) * 0.3})`,
+                  }}
+                />
+              ) : (
+                <Mic size={32} className="sm:w-10 sm:h-10" />
+              )}
+            </button>
+
+            {isRecording && <WaveAnimation audioLevel={audioLevel} />}
+          </div>
 
           <span className="text-xs sm:text-sm text-gray-400 mt-2 sm:mt-4">
             <kbd className="px-2 py-1 bg-gray-200 rounded-md text-gray-600">
