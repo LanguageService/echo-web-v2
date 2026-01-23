@@ -18,13 +18,13 @@ export default function ProfileForm({
   isLoading,
 }: ProfileFormProps) {
   const [formData, setFormData] = useState({
-    first_name: profile.first_name,
-    last_name: profile.last_name,
-    email: profile.email,
+    first_name: profile.first_name || "",
+    last_name: profile.last_name || "",
+    email: profile.email || "",
     phone: profile.phone || "",
-    gender: profile.gender,
+    gender: profile.gender || "",
     date_of_birth: profile.date_of_birth || "",
-    address: profile.address,
+    address: profile.address || "",
     city: profile.city || "",
     state: profile.state || "",
     origin_country: profile.origin_country || "",
@@ -139,6 +139,7 @@ export default function ProfileForm({
               onChange={handleChange}
               className="w-full px-3 py-2 border border-[#D0D5DD] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F79009]"
             >
+              <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>

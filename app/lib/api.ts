@@ -417,3 +417,67 @@ export async function fetchRecentTranslations(): Promise<RecentTranslationsRespo
 
   return response.json();
 }
+
+// sign up flow
+export interface SignUpResponse {
+  code: number;
+  status: string;
+  message: string;
+  data: {
+    token: {
+      refresh: string;
+      access: string;
+    };
+    user: UserProfile;
+  };
+}
+
+export interface VerifyOTPRequest {
+  email: string;
+  otp_code: string;
+}
+
+export interface VerifyOTPResponse {
+  code: number;
+  status: string;
+  token: {
+    refresh: string;
+    access: string;
+  };
+}
+
+export async function signUpUser(
+  credentials: SignUpRequest,
+): Promise<SignUpResponse> {
+  const response = await fetch(`${API_BASE_URL}/auth/customer/user/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(credentials),
+  });
+
+  if (!response.ok) {
+    throw new Error("Signup failed");
+  }
+
+  return response.json();
+}
+
+export async function verifyOTP(
+  data: VerifyOTPRequest,
+): Promise<VerifyOTPResponse> {
+  const response = await fetch(`${API_BASE_URL}/auth/verify-otp/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("OTP verification failed");
+  }
+
+  return response.json();
+}

@@ -3,14 +3,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { verifyOTP } from "@/lib/api";
 
 export default function VerifyEmail() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
   const isComplete = code.every((digit) => digit !== "");
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("signup_email");
+    if (!storedEmail) {
+      router.push("/signup");
+      return;
+    }
+    setEmail(storedEmail);
+  }, [router]);
 
   const handleChange = (value: string, index: number) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -30,7 +41,6 @@ export default function VerifyEmail() {
     }
   };
 
-  // 🔥 Auto verify when all 6 digits are filled
   useEffect(() => {
     if (isComplete) {
       verifyCode();
@@ -38,23 +48,31 @@ export default function VerifyEmail() {
   }, [isComplete]);
 
   const verifyCode = async () => {
-    if (loading) return;
+    if (loading || !email) return;
     setLoading(true);
 
     const otp = code.join("");
 
-    // Simulate backend verification
-    await new Promise((res) => setTimeout(res, 1200));
+    try {
+      const response = await verifyOTP({
+        email,
+        otp_code: otp,
+      });
 
-    // For demo: only "123456" succeeds
-    if (otp === "123456") {
-      toast.success("Verification successful");
-      router.push("/verify/success");
-    } else {
+      if (response.code === 200) {
+        localStorage.setItem("token", response.token.access);
+        localStorage.setItem("refreshToken", response.token.refresh);
+        localStorage.removeItem("signup_email");
+        toast.success("Verification successful!");
+        router.push("/verify/success");
+      } else {
+        toast.error("Invalid verification code");
+        router.push("/verify/fail");
+      }
+    } catch (error) {
       toast.error("Verification failed");
-      //   alert("Invalid code");
-      setCode(["", "", "", "", "", ""]);
-      inputsRef.current[0]?.focus();
+      router.push("/verify/fail");
+    } finally {
       setLoading(false);
     }
   };
@@ -64,14 +82,13 @@ export default function VerifyEmail() {
       <div className="w-full max-w-md bg-white rounded-2xl p-6 sm:p-8 shadow">
         <h1 className="text-xl font-semibold">Verify your email</h1>
         <p className="text-sm text-gray-500 mt-2">
-          We’ve sent a 6-digit code to your@gmail.com. Enter it below.
+          We've sent a 6-digit code to {email}. Enter it below.
         </p>
 
         <div className="flex justify-between gap-2 mt-6">
           {code.map((digit, i) => (
             <input
               key={i}
-              //   ref={(el) => (inputsRef.current[i] = el)}
               ref={(el) => {
                 inputsRef.current[i] = el;
               }}
@@ -87,7 +104,7 @@ export default function VerifyEmail() {
         </div>
 
         <p className="text-sm text-gray-500 mt-4">
-          Didn’t get the code?{" "}
+          Didn't get the code?{" "}
           <span className="text-[#F2C48D] font-medium cursor-pointer">
             Resend
           </span>

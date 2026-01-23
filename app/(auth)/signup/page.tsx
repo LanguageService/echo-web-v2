@@ -22,50 +22,54 @@ import {
   FormMessage,
 } from "@/components/ui/Form";
 import { LogIn, Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { loginUser, type LoginRequest } from "@/lib/api";
+import { signUpUser, type SignUpRequest } from "@/lib/api";
 import { z } from "zod";
 import { toast } from "react-toastify";
 
-const loginSchema = z.object({
+const signUpSchema = z.object({
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-export default function Login() {
+export default function SignUp() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const form = useForm<LoginRequest>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<SignUpRequest>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
+      first_name: "",
+      last_name: "",
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (data: LoginRequest) => {
+  const onSubmit = async (data: SignUpRequest) => {
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await loginUser(data);
+      const response = await signUpUser(data);
 
-      if (response.code === 200 && response.token?.access) {
-        // Store access token
-        localStorage.setItem("token", response.token.access);
-        localStorage.setItem("refreshToken", response.token.refresh);
-        toast.success("Login successful");
-
-        // Redirect to dashboard
-        router.push("/dashboard");
+      if (response.code === 201) {
+        toast.success(
+          "Account created successfully! Check your email for verification code.",
+        );
+        // Store email for OTP verification
+        localStorage.setItem("signup_email", data.email);
+        router.push("/verify-otp");
       } else {
-        setError(response.message || "Login failed");
-        toast.error("Login failed");
+        setError(response.message || "Signup failed");
+        toast.error("Signup failed");
       }
     } catch (error) {
-      setError("Invalid email or password. Please try again.");
+      setError("Failed to create account. Please try again.");
+      toast.error("Failed to create account");
     } finally {
       setIsLoading(false);
     }
@@ -116,7 +120,7 @@ export default function Login() {
 
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="first_name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>First Name</FormLabel>
@@ -134,7 +138,7 @@ export default function Login() {
 
                 <FormField
                   control={form.control}
-                  name="email"
+                  name="last_name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Last Name</FormLabel>
@@ -227,15 +231,12 @@ export default function Login() {
 
             {/* Social Buttons */}
             <div className="mt-6 grid grid-cols-3 justify-items-center">
-              {/* Google */}
               <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] hover:bg-[#F5FAFB] transition-colors">
                 <img src="/google.svg" alt="Google" className="w-5 h-5" />
               </button>
-              {/* Facebook */}
               <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] hover:bg-[#F5FAFB] transition-colors">
                 <img src="/facebook.svg" alt="Facebook" className="w-5 h-5" />
               </button>
-              {/* Apple */}
               <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] hover:bg-[#F5FAFB] transition-colors">
                 <img src="/apple.svg" alt="Apple" className="w-5 h-5" />
               </button>
