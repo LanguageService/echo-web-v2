@@ -405,20 +405,78 @@ export interface GeneralVoiceTranslationHistory {
 
 export async function fetchRecentTranslations(): Promise<RecentTranslationsResponse> {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${API_BASE_URL}/translations/recent`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch recent translations");
+  if (!token) {
+    return {
+      count: 0,
+      offset: 0,
+      limit: 0,
+      results: [],
+    };
   }
 
-  return response.json();
+  try {
+    // Try to get voice translations first (we know this endpoint works)
+    const voiceResponse = await fetch(`${API_BASE_URL}/voice/translations/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Try to get text translations
+    const textResponse = await fetch(`${API_BASE_URL}/text/text/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const voiceData = voiceResponse.ok ? await voiceResponse.json() : [];
+    const textData = textResponse.ok ? await textResponse.json() : [];
+
+    // Combine and format the data
+    const voiceTranslations = (
+      Array.isArray(voiceData) ? voiceData : voiceData.results || []
+    ).map((item: any) => ({
+      ...item,
+      feature_type: "SPEECH_TRANSLATION",
+    }));
+
+    const textTranslations = (
+      Array.isArray(textData) ? textData : textData.results || []
+    ).map((item: any) => ({
+      ...item,
+      feature_type: "TEXT_TRANSLATION",
+      original_audio_url: null,
+      translated_audio_url: null,
+      session_id: null,
+      audio_files: [],
+    }));
+
+    // Combine and sort by date
+    const allTranslations = [...voiceTranslations, ...textTranslations].sort(
+      (a, b) =>
+        new Date(b.date_created).getTime() - new Date(a.date_created).getTime(),
+    );
+
+    return {
+      count: allTranslations.length,
+      offset: 0,
+      limit: allTranslations.length,
+      results: allTranslations,
+    };
+  } catch (error) {
+    console.error("Error fetching recent translations:", error);
+    return {
+      count: 0,
+      offset: 0,
+      limit: 0,
+      results: [],
+    };
+  }
 }
 
 // sign up flow
+
 export interface SignUpResponse {
   code: number;
   status: string;
