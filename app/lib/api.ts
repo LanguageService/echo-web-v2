@@ -539,3 +539,65 @@ export async function verifyOTP(
 
   return response.json();
 }
+
+// reset password flow
+// Forgot Password interfaces and functions
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ForgotPasswordResponse {
+  code: number;
+  status: string;
+  token: number;
+}
+
+export interface ResetPasswordRequest {
+  confirm_password: string;
+  otp_code: string;
+  password: string;
+}
+
+export interface ResetPasswordResponse {
+  code: number;
+  message: string;
+}
+
+export async function initiateForgotPassword(
+  data: ForgotPasswordRequest,
+): Promise<ForgotPasswordResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/auth/reset-password/initiate/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to initiate password reset");
+  }
+
+  return response.json();
+}
+
+export async function resetPassword(
+  data: ResetPasswordRequest,
+): Promise<ResetPasswordResponse> {
+  const response = await fetch(`${API_BASE_URL}/auth/reset-password/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to reset password");
+  }
+
+  return response.json();
+}

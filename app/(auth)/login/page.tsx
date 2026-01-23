@@ -164,6 +164,16 @@ export default function Login() {
                   )}
                 />
 
+                <div className="flex justify-end items-center">
+                  <button
+                    type="button"
+                    onClick={() => router.push("/forgot-password")}
+                    className="text-sm text-primary hover:underline"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+
                 <Button type="submit" disabled={isLoading}>
                   {isLoading ? "Signing In..." : "Sign In"}
                 </Button>
