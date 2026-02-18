@@ -56,6 +56,7 @@ export default function Login() {
         // Store access token
         localStorage.setItem("token", response.token.access);
         localStorage.setItem("refreshToken", response.token.refresh);
+        document.cookie = `token=${response.token.access}; path=/; max-age=86400; SameSite=Lax`;
         toast.success("Login successful");
         // Redirect to dashboard
         router.push("/dashboard");
@@ -75,23 +76,10 @@ export default function Login() {
   };
 
   return (
-    // <div className="min-h-screen pb-20 safe-area-bottom">
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-yellow-50 dark:from-gray-900 dark:to-gray-800 pb-20 safe-area-bottom">
       <div className=" flex items-center justify-center p-4 pt-8">
         <Card className=" bg-[#eff4f5] w-full max-w-md">
           <CardHeader className="text-center">
-            {/* <div className="flex items-center justify-between mb-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Button>
-              <div className="flex-1" />
-            </div> */}
             <div
               onClick={handleBack}
               className="cursor-pointer mx-auto mb-4 p-3 bg-gradient-to-br from-[#249E8E] via-[#F2C94C] to-[#E96A3A] rounded-full w-fit"

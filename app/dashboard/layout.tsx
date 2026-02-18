@@ -1,9 +1,7 @@
 "use client";
 import { Moon, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import { toast } from "react-toastify";
 
 interface ProfileHeaderProps {
   firstName: string;
@@ -34,14 +32,19 @@ export default function DashboardLayout({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const router = useRouter();
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
-      toast.error("Please log in to access the dashboard.");
-    }
-  }, [router]);
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setOpen(true);
+      } else {
+        setOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-gray-50 relative">
