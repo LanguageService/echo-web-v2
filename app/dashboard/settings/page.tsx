@@ -247,7 +247,7 @@ export default function SettingsPage() {
           </p>
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full flex justify-end">
         <button
           onClick={handleSave}
           disabled={saving}
