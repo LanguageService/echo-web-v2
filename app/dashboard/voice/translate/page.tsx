@@ -1,7 +1,6 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import Header from "@/components/Header";
 import VoiceCard from "@/components/VoiceCard";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -28,20 +27,22 @@ function TranslatePage() {
     });
   };
 
-  // Add state
   const [history, setHistory] = useState<VoiceTranslationHistory[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
 
-  // Add useEffect to load history
   useEffect(() => {
     loadHistory();
   }, []);
 
   const loadHistory = async () => {
+    setIsLoadingHistory(true);
     try {
       const historyData = await fetchVoiceTranslationHistory();
       setHistory(historyData);
     } catch (error) {
       console.error("Failed to load voice history:", error);
+    } finally {
+      setIsLoadingHistory(false);
     }
   };
 
@@ -81,7 +82,12 @@ function TranslatePage() {
             </button>
           </div>
 
-          {history.length === 0 ? (
+          {isLoadingHistory ? (
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto mb-4 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+              <p className="text-gray-500">Loading translations...</p>
+            </div>
+          ) : history.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <Clock className="w-12 h-12 mx-auto mb-4 text-gray-300" />
               <p>No translations yet</p>
@@ -91,7 +97,7 @@ function TranslatePage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {history.map((item) => (
+              {history.slice(0, 3).map((item) => (
                 <div
                   key={item.id}
                   className="bg-white border border-[#b9ced5] rounded-xl p-4 sm:p-6 hover:shadow-md transition"
