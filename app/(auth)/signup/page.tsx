@@ -84,19 +84,10 @@ export default function SignUp() {
       <div className=" flex items-center justify-center p-4 pt-8">
         <Card className=" bg-[#eff4f5] w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="flex items-center justify-between mb-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBack}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Button>
-              <div className="flex-1" />
-            </div>
-            <div className="mx-auto mb-4 p-3 bg-gradient-to-br from-[#249E8E] via-[#F2C94C] to-[#E96A3A] rounded-full w-fit">
+            <div
+              onClick={handleBack}
+              className="cursor-pointer mx-auto mb-4 p-3 bg-gradient-to-br from-[#249E8E] via-[#F2C94C] to-[#E96A3A] rounded-full w-fit"
+            >
               <LogIn className="h-6 w-6 text-white" />
             </div>
             <CardTitle className="text-2xl echo-text">
@@ -190,7 +181,7 @@ export default function SignUp() {
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent text-black"
+                            className="cursor-pointer absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 hover:bg-transparent text-black"
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? (

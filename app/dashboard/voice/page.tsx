@@ -25,9 +25,10 @@ export default function LanguageSelection() {
       try {
         const data = await fetchLanguages();
         setLanguages(data.languages);
-        setInputLang(data.languages[0]);
+        const englishLang = data.languages.find((l) => l.code === "en");
+        setInputLang(englishLang || data.languages[0]);
         setOutputLang(
-          data.languages.find((l) => l.code === "rw") || data.languages[1]
+          data.languages.find((l) => l.code === "rw") || data.languages[1],
         );
       } catch (error) {
         console.error("Failed to load languages:", error);
@@ -133,11 +134,11 @@ export default function LanguageSelection() {
             href={`/dashboard/voice/translate?inputLang=${
               inputLang.code
             }&outputLang=${outputLang.code}&inputName=${encodeURIComponent(
-              inputLang.name
+              inputLang.name,
             )}&outputName=${encodeURIComponent(
-              outputLang.name
+              outputLang.name,
             )}&inputNative=${encodeURIComponent(
-              inputLang.native_name
+              inputLang.native_name,
             )}&outputNative=${encodeURIComponent(outputLang.native_name)}`}
           >
             <button className="w-full sm:w-auto bg-[#F79009] hover:bg-[#E68200] text-white px-6 sm:px-8 py-3 rounded-full text-sm font-semibold shadow flex items-center justify-center gap-2">
