@@ -59,7 +59,7 @@ export default function ProfileHeader({
     <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-[#E4E7EC]">
       <div className="flex flex-col sm:flex-row items-center gap-6">
         <div className="relative">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-[#249E8E] via-[#F2C94C] to-[#E96A3A] flex items-center justify-center text-white text-3xl sm:text-4xl font-bold overflow-hidden">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border border-orange-500 bg-gradient-to-br from-[#249E8E] via-[#F2C94C] to-[#E96A3A] flex items-center justify-center text-white text-3xl sm:text-4xl font-bold overflow-hidden">
             {previewUrl ? (
               <img
                 src={previewUrl}

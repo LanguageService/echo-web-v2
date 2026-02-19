@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { UserProfile } from "@/lib/api";
-import { Camera } from "lucide-react";
+import { Save } from "lucide-react";
 
 interface ProfileFormProps {
   profile: UserProfile;
@@ -137,7 +137,7 @@ export default function ProfileForm({
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-[#D0D5DD] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F79009]"
+              className="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm sm:text-base"
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
@@ -234,9 +234,11 @@ export default function ProfileForm({
         <Button
           type="submit"
           disabled={isLoading}
-          className="px-6 bg-[#F79009] hover:bg-[#E68200]"
+          className="cursor-pointer px-6 bg-[#F79009] hover:bg-[#E68200]"
         >
           {isLoading ? "Saving..." : "Save Changes"}
+
+          <Save className="w-4 h-4 ml-2" />
         </Button>
       </div>
     </form>
