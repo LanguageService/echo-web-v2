@@ -2,7 +2,8 @@
 
 import { ArrowLeftRight, ChevronDown } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { fetchLanguages, type Language } from "@/lib/api";
+// import { fetchLanguages, type Language } from "@/lib/api";
+import { fetchTextLanguages, type Language } from "@/lib/api";
 
 interface LanguageSwitcherProps {
   onLanguageChange?: (inputLang: Language, outputLang: Language) => void;
@@ -14,11 +15,14 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
   const [outputLang, setOutputLang] = useState<Language | null>(null);
   const [showInputDropdown, setShowInputDropdown] = useState(false);
   const [showOutputDropdown, setShowOutputDropdown] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadLanguages = async () => {
       try {
-        const response = await fetchLanguages();
+        // const response = await fetchLanguages();
+        const response = await fetchTextLanguages();
+
         setLanguages(response.languages);
 
         // Set default languages
@@ -40,7 +44,7 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
 
   const handleInputLanguageSelect = useCallback(
     (lang: Language) => {
-      console.log("Input language selected:", lang);
+      // console.log("Input language selected:", lang);
       setInputLang(lang);
       setShowInputDropdown(false);
       if (outputLang) {
@@ -52,7 +56,7 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
 
   const handleOutputLanguageSelect = useCallback(
     (lang: Language) => {
-      console.log("Output language selected:", lang);
+      // console.log("Output language selected:", lang);
       setOutputLang(lang);
       setShowOutputDropdown(false);
       if (inputLang) {

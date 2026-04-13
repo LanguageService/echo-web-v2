@@ -5,12 +5,13 @@ import {
   fetchUserSettings,
   updateUserSettings,
   fetchLanguages,
+  fetchVoiceLanguages,
   type UserSettings,
   type Language,
 } from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
 import { Save, Loader2 } from "lucide-react";
-
+// fetchVoiceLanguages
 export default function SettingsPage() {
   const { toast, toasts } = useToast();
   const [settings, setSettings] = useState<UserSettings | null>(null);
@@ -26,7 +27,8 @@ export default function SettingsPage() {
     try {
       const [settingsData, languagesData] = await Promise.all([
         fetchUserSettings(),
-        fetchLanguages(),
+        // fetchLanguages(),
+        fetchVoiceLanguages(),
       ]);
       setSettings(settingsData);
       setLanguages(languagesData.languages);

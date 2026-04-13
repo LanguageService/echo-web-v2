@@ -1,3 +1,4 @@
+// const API_BASE_URL = "https://echo-v1-backend.vercel.app/api/v1";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export interface LoginRequest {
@@ -71,7 +72,10 @@ export interface Language {
   flag_emoji: string;
   speech_to_text_supported: boolean;
   text_to_speech_supported: boolean;
-  translation_supported: boolean;
+  text_to_text_supported: boolean;
+  speech_to_speech_translation_supported: boolean;
+  image_translation_supported: boolean;
+  document_translation_supported: boolean;
   is_african_language: boolean;
 }
 
@@ -87,6 +91,38 @@ export const fetchLanguages = async (): Promise<LanguagesResponse> => {
       "Content-Type": "application/json",
     },
   });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch languages");
+  }
+  return response.json();
+};
+export const fetchTextLanguages = async (): Promise<LanguagesResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/translations/base/languages/?text_to_text_supported=true`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch languages");
+  }
+  return response.json();
+};
+export const fetchVoiceLanguages = async (): Promise<LanguagesResponse> => {
+  const response = await fetch(
+    `${API_BASE_URL}/translations/base/languages/?speech_to_speech_translation_supported=true`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch languages");
@@ -190,7 +226,8 @@ export async function translateText(
 
   console.log("Sending translation request:", data);
 
-  const response = await fetch(`${API_BASE_URL}/text/text/`, {
+  const response = await fetch(`${API_BASE_URL}/translations/text/base/`, {
+    // const response = await fetch(`${API_BASE_URL}/text/text/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -227,7 +264,8 @@ export interface TranslationHistory {
 
 export async function fetchTranslationHistory(): Promise<TranslationHistory[]> {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${API_BASE_URL}/text/text`, {
+  const response = await fetch(`${API_BASE_URL}/translations/text`, {
+    // const response = await fetch(`${API_BASE_URL}/text/text`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -269,7 +307,8 @@ export interface UpdateSettingsRequest {
 
 export async function fetchUserSettings(): Promise<UserSettings> {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${API_BASE_URL}/voice/settings/`, {
+  const response = await fetch(`${API_BASE_URL}/translations/base/settings/`, {
+  // const response = await fetch(`${API_BASE_URL}/voice/settings/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -417,7 +456,8 @@ export async function fetchRecentTranslations(): Promise<RecentTranslationsRespo
 
   try {
     // Try to get voice translations first (we know this endpoint works)
-    const voiceResponse = await fetch(`${API_BASE_URL}/voice/translations/`, {
+    const voiceResponse = await fetch(`${API_BASE_URL}/translations/history`, {
+      // const voiceResponse = await fetch(`${API_BASE_URL}/voice/translations/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

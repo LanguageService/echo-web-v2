@@ -34,6 +34,7 @@ export default function TextTranslation({
   const [isTranslating, setIsTranslating] = useState(false);
   const [history, setHistory] = useState<TranslationHistory[]>([]);
   const [showToast, setShowToast] = useState(false);
+  const [historyError, setHistoryError] = useState(false);
 
   const [selectedLanguages, setSelectedLanguages] = useState<{
     input: Language | null;
@@ -47,12 +48,26 @@ export default function TextTranslation({
     loadHistory();
   }, []);
 
+  // const loadHistory = async () => {
+  //   setHistoryError(false);
+  //   try {
+  //     const historyData = await fetchTranslationHistory();
+  //     setHistory(historyData.slice(0, 5)); // Show only first 5
+  //   } catch (error) {
+  //     console.error("Failed to load history:", error);
+  //   }
+  // };
+
   const loadHistory = async () => {
+    setHistoryError(false);
     try {
       const historyData = await fetchTranslationHistory();
-      setHistory(historyData.slice(0, 5)); // Show only first 5
-    } catch (error) {
-      console.error("Failed to load history:", error);
+      const items = Array.isArray(historyData)
+        ? historyData
+        : ((historyData as any).results ?? []);
+      setHistory(items.slice(0, 5));
+    } catch {
+      setHistoryError(true);
     }
   };
 
@@ -148,7 +163,7 @@ export default function TextTranslation({
             !selectedLanguages.output ||
             isTranslating
           }
-          className="bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white px-8 py-3 rounded-full font-semibold transition"
+          className="bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white px-8 py-3 rounded-full font-semibold transition cursor-pointer"
         >
           {isTranslating ? "Translating..." : "Translate Text"}
         </button>
@@ -185,11 +200,13 @@ export default function TextTranslation({
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
                     <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
-                      {item.original_language_name}
+                      {item.original_language}
+                      {/* {item.original_language_name} */}
                     </span>
                     <ArrowRight className="w-4 h-4 text-gray-400" />
                     <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">
-                      {item.target_language_name}
+                      {item.target_language}
+                      {/* {item.target_language_name} */}
                     </span>
                   </div>
                   <div className="flex flex-col sm:items-end gap-1">

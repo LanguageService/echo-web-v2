@@ -157,11 +157,13 @@ export default function Dashboard() {
                     {getFeatureTypeLabel(item?.feature_type)}
                   </span>
                   <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
-                    {item.original_language_name}
+                    {item.original_language}
+                    {/* {item.original_language_name} */}
                   </span>
                   <ArrowRight className="w-4 h-4 text-gray-400" />
                   <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">
-                    {item.target_language_name}
+                    {item.target_language}
+                    {/* {item.target_language_name} */}
                   </span>
                 </div>
                 <div className="flex flex-col sm:items-end gap-1">

@@ -17,10 +17,24 @@ export default function TranslationHistoryPage() {
     loadHistory();
   }, []);
 
+  // const loadHistory = async () => {
+  //   try {
+  //     const historyData = await fetchTranslationHistory();
+  //     setHistory(historyData);
+  //   } catch (error) {
+  //     console.error("Failed to load history:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const loadHistory = async () => {
     try {
       const historyData = await fetchTranslationHistory();
-      setHistory(historyData);
+      const items = Array.isArray(historyData)
+        ? historyData
+        : ((historyData as any).results ?? []);
+      setHistory(items);
     } catch (error) {
       console.error("Failed to load history:", error);
     } finally {
