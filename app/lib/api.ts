@@ -364,7 +364,8 @@ export async function fetchVoiceTranslationHistory(): Promise<
   VoiceTranslationHistory[]
 > {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${API_BASE_URL}/voice/translations/`, {
+  const response = await fetch(`${API_BASE_URL}/translations/speech`, {
+  // const response = await fetch(`${API_BASE_URL}/voice/translations/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

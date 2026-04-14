@@ -90,11 +90,11 @@ export default function TranslationHistoryPage() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <div className="flex items-center gap-3">
                   <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
-                    {item.original_language_name}
+                    {item.original_language}
                   </span>
                   <ArrowRight className="w-4 h-4 text-gray-400" />
                   <span className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full font-medium">
-                    {item.target_language_name}
+                    {item.target_language}
                   </span>
                 </div>
                 <div className="flex flex-col sm:items-end gap-1">

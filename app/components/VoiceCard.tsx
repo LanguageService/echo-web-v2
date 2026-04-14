@@ -17,18 +17,37 @@ interface SelectedLanguages {
   };
 }
 
+// interface TranslationResponse {
+//   success: boolean;
+//   translation_id: string;
+//   original_text: string;
+//   translated_text: string;
+//   original_language: string;
+//   target_language: string;
+//   original_audio_url: string;
+//   translated_audio_url: string;
+//   confidence_score: number;
+//   processing_time: number;
+//   audio_available: boolean;
+// }
+
 interface TranslationResponse {
-  success: boolean;
-  translation_id: string;
-  original_text: string;
-  translated_text: string;
-  original_language: string;
-  target_language: string;
+  id: string;
+  title: string;
+  mode: string;
+  speech_service: string;
+  audio_format: string;
+  duration: number;
   original_audio_url: string;
   translated_audio_url: string;
+  original_text: string;
+  translated_text: string;
+  status: string;
+  original_language: string;
+  target_language: string;
   confidence_score: number;
-  processing_time: number;
-  audio_available: boolean;
+  total_processing_time: number;
+  date_created: string;
 }
 
 export default function VoiceCard({
@@ -166,6 +185,42 @@ export default function VoiceCard({
     }
   };
 
+  // const uploadAudio = async (audioBlob: Blob) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("audio_file", audioBlob, "recording.wav");
+  //     formData.append("source_language", inputLang.code);
+  //     formData.append("target_language", outputLang.code);
+
+  //     const token = localStorage.getItem("token");
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_BASE_URL}/voice/translate/`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //         body: formData,
+  //       },
+  //     );
+
+  //     const result = await response.json();
+  //     console.log("Translation response:", result);
+
+  //     if (result.success) {
+  //       setTranslationResult(result);
+  //       // Auto-play translated audio
+  //       const audio = new Audio(result.translated_audio_url);
+  //       audio.play();
+  //     }
+  //   } catch (error) {
+  //     console.error("Error uploading audio:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const uploadAudio = async (audioBlob: Blob) => {
     setIsLoading(true);
     try {
@@ -173,10 +228,11 @@ export default function VoiceCard({
       formData.append("audio_file", audioBlob, "recording.wav");
       formData.append("source_language", inputLang.code);
       formData.append("target_language", outputLang.code);
+      formData.append("speech_service", "STS");
 
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/voice/translate/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/translations/speech/base/`,
         {
           method: "POST",
           headers: {
@@ -186,12 +242,14 @@ export default function VoiceCard({
         },
       );
 
-      const result = await response.json();
-      console.log("Translation response:", result);
+      if (!response.ok) {
+        throw new Error(`Translation failed: ${response.status}`);
+      }
 
-      if (result.success) {
-        setTranslationResult(result);
-        // Auto-play translated audio
+      const result: TranslationResponse = await response.json();
+      setTranslationResult(result);
+
+      if (result.translated_audio_url) {
         const audio = new Audio(result.translated_audio_url);
         audio.play();
       }

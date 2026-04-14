@@ -10,7 +10,7 @@ interface TranslationResultProps {
     original_audio_url: string;
     translated_audio_url: string;
     confidence_score: number;
-    processing_time: number;
+    total_processing_time: number;
     original_language: string;
     target_language: string;
   };
@@ -69,13 +69,15 @@ export default function TranslationResult({
           <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-full">
             <TrendingUp className="w-4 h-4 text-green-600" />
             <span className="text-sm font-semibold text-green-700">
-              {result.confidence_score}% Confidence
+              {/* {result.confidence_score}% Confidence */}
+              {result.confidence_score ?? 0}% Confidence
             </span>
           </div>
           <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full">
             <Clock className="w-4 h-4 text-blue-600" />
             <span className="text-sm font-semibold text-blue-700">
-              {result.processing_time.toFixed(2)}s
+              {/* {result.processing_time.toFixed(2)}s */}
+              {(result.total_processing_time ?? 0).toFixed(2)}s
             </span>
           </div>
         </div>
