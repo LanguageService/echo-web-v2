@@ -1,8 +1,69 @@
+// "use client";
+
+// import { Camera } from "lucide-react";
+// import { useState } from "react";
+// import { updateUserProfile } from "@/lib/api";
+// import { useToast } from "@/hooks/useToast";
+
+// interface ProfileHeaderProps {
+//   firstName: string;
+//   lastName: string;
+//   email: string;
+//   profilePicture: string | null;
+//   userId: number;
+//   onProfileUpdate?: () => void;
+// }
+
+// export default function ProfileHeader({
+//   firstName,
+//   lastName,
+//   email,
+//   profilePicture,
+//   userId,
+//   onProfileUpdate,
+// }: ProfileHeaderProps) {
+//   const { toast } = useToast();
+//   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+//   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+//   const [isUploading, setIsUploading] = useState(false);
+
+//   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       setSelectedFile(file);
+//       const url = URL.createObjectURL(file);
+//       setPreviewUrl(url);
+
+//       // Auto-upload the file
+//       setIsUploading(true);
+//       try {
+//         const formData = new FormData();
+//         formData.append("profile_picture", file);
+
+//         await updateUserProfile(userId, formData);
+
+//         toast("Profile picture updated successfully!");
+//         onProfileUpdate?.();
+//       } catch (error) {
+//         console.error("Failed to update profile picture:", error);
+//         toast("Failed to update profile picture");
+//         setPreviewUrl(null);
+//         setSelectedFile(null);
+//       } finally {
+//         setIsUploading(false);
+//       }
+//     }
+//   };
+
 "use client";
 
 import { Camera } from "lucide-react";
 import { useState } from "react";
-import { updateUserProfile } from "@/lib/api";
+import {
+  updateUserProfile,
+  type UserProfile,
+  type UpdateUserProfileRequest,
+} from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
 
 interface ProfileHeaderProps {
@@ -11,6 +72,7 @@ interface ProfileHeaderProps {
   email: string;
   profilePicture: string | null;
   userId: number;
+  profile: UserProfile;
   onProfileUpdate?: () => void;
 }
 
@@ -20,35 +82,42 @@ export default function ProfileHeader({
   email,
   profilePicture,
   userId,
+  profile,
   onProfileUpdate,
 }: ProfileHeaderProps) {
   const { toast } = useToast();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedFile(file);
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
-
-      // Auto-upload the file
       setIsUploading(true);
       try {
-        const formData = new FormData();
-        formData.append("profile_picture", file);
+        const updateData: UpdateUserProfileRequest = {
+          first_name: profile.first_name,
+          last_name: profile.last_name,
+          email: profile.email,
+          gender: profile.gender,
+          phone: profile.phone,
+          origin_country: profile.origin_country,
+          resident_country: profile.resident_country,
+          occupation: profile.occupation,
+          city: profile.city,
+          state: profile.state,
+          address: profile.address,
+          date_of_birth: profile.date_of_birth,
+          profile_picture: url,
+        };
 
-        await updateUserProfile(userId, formData);
-
+        await updateUserProfile(userId, updateData);
         toast("Profile picture updated successfully!");
         onProfileUpdate?.();
-      } catch (error) {
-        console.error("Failed to update profile picture:", error);
+      } catch {
         toast("Failed to update profile picture");
         setPreviewUrl(null);
-        setSelectedFile(null);
       } finally {
         setIsUploading(false);
       }

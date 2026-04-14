@@ -3,12 +3,18 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { UserProfile } from "@/lib/api";
+import { UserProfile, UpdateUserProfileRequest } from "@/lib/api";
 import { Save } from "lucide-react";
+
+// interface ProfileFormProps {
+//   profile: UserProfile;
+//   onSave: (data: FormData) => void;
+//   isLoading: boolean;
+// }
 
 interface ProfileFormProps {
   profile: UserProfile;
-  onSave: (data: FormData) => void;
+  onSave: (data: UpdateUserProfileRequest) => void;
   isLoading: boolean;
 }
 
@@ -50,24 +56,42 @@ export default function ProfileForm({
     }
   };
 
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   const submitData = new FormData();
+
+  //   // Add all form fields
+  //   Object.entries(formData).forEach(([key, value]) => {
+  //     if (value) {
+  //       submitData.append(key, value);
+  //     }
+  //   });
+
+  //   // Add profile picture if selected
+  //   if (selectedFile) {
+  //     submitData.append("profile_picture", selectedFile);
+  //   }
+
+  //   onSave(submitData);
+  // };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const submitData = new FormData();
-
-    // Add all form fields
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value) {
-        submitData.append(key, value);
-      }
+    onSave({
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      email: formData.email,
+      phone: formData.phone || null,
+      gender: formData.gender,
+      date_of_birth: formData.date_of_birth || null,
+      address: formData.address,
+      city: formData.city || null,
+      state: formData.state || null,
+      origin_country: formData.origin_country || null,
+      resident_country: formData.resident_country || null,
+      occupation: formData.occupation || null,
     });
-
-    // Add profile picture if selected
-    if (selectedFile) {
-      submitData.append("profile_picture", selectedFile);
-    }
-
-    onSave(submitData);
   };
 
   return (

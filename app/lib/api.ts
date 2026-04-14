@@ -181,17 +181,54 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
   return response.json();
 };
 
+// export async function updateUserProfile(
+//   id: number,
+//   data: FormData,
+// ): Promise<UserProfile> {
+//   const token = localStorage.getItem("token");
+//   const response = await fetch(`${API_BASE_URL}/user/users/${id}/`, {
+//     method: "PATCH",
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//     body: data,
+//   });
+
+//   if (!response.ok) {
+//     throw new Error("Failed to update profile");
+//   }
+
+//   return response.json();
+// }
+
+export interface UpdateUserProfileRequest {
+  first_name: string;
+  last_name: string;
+  email: string;
+  gender: string;
+  phone: string | null;
+  origin_country: string | null;
+  resident_country: string | null;
+  occupation: string | null;
+  city: string | null;
+  state: string | null;
+  address: string;
+  date_of_birth: string | null;
+  profile_picture?: string | null;
+}
+
 export async function updateUserProfile(
   id: number,
-  data: FormData,
+  data: UpdateUserProfileRequest,
 ): Promise<UserProfile> {
   const token = localStorage.getItem("token");
   const response = await fetch(`${API_BASE_URL}/user/users/${id}/`, {
-    method: "PATCH",
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
-    body: data,
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {
@@ -308,7 +345,7 @@ export interface UpdateSettingsRequest {
 export async function fetchUserSettings(): Promise<UserSettings> {
   const token = localStorage.getItem("token");
   const response = await fetch(`${API_BASE_URL}/translations/base/settings/`, {
-  // const response = await fetch(`${API_BASE_URL}/voice/settings/`, {
+    // const response = await fetch(`${API_BASE_URL}/voice/settings/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -365,7 +402,7 @@ export async function fetchVoiceTranslationHistory(): Promise<
 > {
   const token = localStorage.getItem("token");
   const response = await fetch(`${API_BASE_URL}/translations/speech`, {
-  // const response = await fetch(`${API_BASE_URL}/voice/translations/`, {
+    // const response = await fetch(`${API_BASE_URL}/voice/translations/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

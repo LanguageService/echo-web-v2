@@ -1,6 +1,6 @@
 "use client";
 
-import { Mic, MessageSquare, Image, Phone } from "lucide-react";
+import { Mic, MessageSquare, Image, Phone, FileText } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -70,6 +70,12 @@ export default function Dashboard() {
           desc="Real conversations, translated in real time."
           active
         />
+        <Card
+          icon={<FileText className="text-[#F79009]" />}
+          title="Document"
+          desc="Upload a document. Echo translates it instantly."
+          active
+        />
 
         <Card
           icon={<Image className="text-[#98A2B3]" />}
@@ -78,12 +84,12 @@ export default function Dashboard() {
           soon
         />
 
-        <Card
+        {/* <Card
           icon={<Phone className="text-[#98A2B3]" />}
           title="Call"
           desc="Coming Soon"
           soon
-        />
+        /> */}
       </div>
 
       {/* Recent */}
@@ -295,10 +301,12 @@ function Card({
         return "/dashboard/voice";
       case "text":
         return "/dashboard/text";
+      case "document":
+        return "/dashboard/document";
       case "image":
         return "/dashboard/image";
-      case "call":
-        return "/dashboard/call";
+      // case "call":
+      //   return "/dashboard/call";
       default:
         return "#";
     }
