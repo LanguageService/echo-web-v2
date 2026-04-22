@@ -28,6 +28,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* <script
+          src="https://ternkonnect-widget.vercel.app/widget.js"
+          data-account="Y4TeKv2Ybm"
+        ></script> */}
+
+        <script
+          src="https://cdn.ternkonnect.com/widget.js"
+          data-account="Y4TeKv2Ybm"
+        ></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
