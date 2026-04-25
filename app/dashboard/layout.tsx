@@ -1,5 +1,5 @@
 "use client";
-import { Moon, Sun, Menu, Sparkles } from "lucide-react";
+import { Moon, Sun, Menu, Sparkles, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import { fetchUserProfile, type UserProfile } from "@/lib/api";
@@ -44,10 +44,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="flex items-center gap-3 flex-1">
               <button
                 onClick={() => setOpen(!open)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors shrink-0"
+                className="p-2 bg-orange-50 dark:bg-gray-800 hover:bg-orange-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 shrink-0"
               >
-                <Menu size={20} className="dark:text-white" />
+                <div className="relative w-5 h-5">
+                  <Menu
+                    size={20}
+                    className={`absolute text-orange-500 dark:text-orange-400 transition-all duration-200 ${open ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"
+                      }`}
+                  />
+                  <X
+                    size={20}
+                    className={`absolute text-orange-500 dark:text-orange-400 transition-all duration-200 ${open ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"
+                      }`}
+                  />
+                </div>
               </button>
+
               <div className="hidden sm:flex flex-col">
                 <p className="font-semibold text-sm text-[#0C141D] dark:text-white leading-tight">
                   Hi, {user ? user.first_name : "..."} 👋
