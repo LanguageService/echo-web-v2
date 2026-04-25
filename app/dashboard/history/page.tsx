@@ -6,7 +6,7 @@ import { fetchRecentTranslations, type GeneralVoiceTranslationHistory } from "@/
 import { useToast } from "@/hooks/useToast";
 import { ArrowLeft, Clock, ArrowRight, Volume2, Copy } from "lucide-react";
 
-const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm teence-tracker>xt-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400<mark marker-index=0 reference-tracker> transition-colors";
+const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 teex=5 reference-tracker>xt-sm text-gray-600 dark:text-gray-400 hover:text-eference-tracker>or<mark marker-index=2 reference-tracker>ange-500 dark:hover:text-orange-400 transition-colors";
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export default function HistoryPage() {
   const [history, setHistory] = useState<GeneralVoiceTranslationHistory[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"ALL" | "SPEECH_TRANSLATION" | "TEXT_TRANSLATION">("ALL");
 
   useEffect(() => { loadHistory(); }, []);
 
@@ -38,6 +39,8 @@ export default function HistoryPage() {
   const getFeatureTypeLabel = (type: string) =>
     type === "SPEECH_TRANSLATION" ? "Voice" : "Text";
 
+  const filtered = filter === "ALL" ? history : history.filter(item => item.feature_type === filter);
+
   if (loading) {
     return (
       <div className="p-4 sm:p-6 max-w-7xl mx-auto">
@@ -55,7 +58,8 @@ export default function HistoryPage() {
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto">
-      <div className="flex items-center gap-4 mb-6">
+
+      <div className="flex items-center gap-4 mb-4">
         <button
           onClick={() => router.back()}
           className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition"
@@ -72,7 +76,22 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      {history.length === 0 ? (
+      <div className="flex gap-2 mb-6">
+        {(["ALL", "SPEECH_TRANSLATION", "TEXT_TRANSLATION"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${filter === f
+              ? "bg-orange-500 text-white"
+              : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
+          >
+            {f === "ALL" ? "All" : f === "SPEECH_TRANSLATION" ? "🎙 Voice" : "📝 Text"}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 ? (
         <div className="text-center py-12">
           <Clock className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
           <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">
@@ -84,9 +103,9 @@ export default function HistoryPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {history.map((item) => (
+          {filtered.map((item, index) => (
             <div
-              key={item.id}
+              key={`${item.id}-${index}`}
               className="bg-white dark:bg-gray-900 border border-[#b9ced5] dark:border-gray-700 rounded-xl p-4 sm:p-6 hover:shadow-md transition"
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
@@ -127,10 +146,7 @@ export default function HistoryPage() {
                         </button>
                       )}
                       <button
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(item.original_text);
-                          toast("Text copied successfully!");
-                        }}
+                        onClick={async () => { await navigator.clipboard.writeText(item.original_text); toast("Text copied successfully!"); }}
                         className={btnClass}
                       >
                         <Copy size={16} /> Copy
@@ -153,10 +169,7 @@ export default function HistoryPage() {
                         </button>
                       )}
                       <button
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(item.translated_text);
-                          toast("Text copied successfully!");
-                        }}
+                        onClick={async () => { await navigator.clipboard.writeText(item.translated_text); toast("Text copied successfully!"); }}
                         className={btnClass}
                       >
                         <Copy size={16} /> Copy

@@ -502,7 +502,13 @@ export async function fetchRecentTranslations(): Promise<RecentTranslationsRespo
     });
 
     // Try to get text translations
-    const textResponse = await fetch(`${API_BASE_URL}/text/text/`, {
+    // const textResponse = await fetch(`${API_BASE_URL}/text/text/`, {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
+
+    const textResponse = await fetch(`${API_BASE_URL}/translations/text`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -531,10 +537,19 @@ export async function fetchRecentTranslations(): Promise<RecentTranslationsRespo
     }));
 
     // Combine and sort by date
-    const allTranslations = [...voiceTranslations, ...textTranslations].sort(
-      (a, b) =>
-        new Date(b.date_created).getTime() - new Date(a.date_created).getTime(),
-    );
+    // const allTranslations = [...voiceTranslations, ...textTranslations].sort(
+    //   (a, b) =>
+    //     new Date(b.date_created).getTime() - new Date(a.date_created).getTime(),
+    // );
+
+    const allTranslations = [...voiceTranslations, ...textTranslations]
+      .filter((item, index, self) => self.findIndex(t => t.id === item.id) === index)
+      .sort(
+        (a, b) =>
+          new Date(b.date_created).getTime() - new Date(a.date_created).getTime(),
+      );
+
+
 
     return {
       count: allTranslations.length,
