@@ -162,9 +162,9 @@ export default function DocumentTranslationPage() {
             <span className="bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 px-3 py-1 rounded-full font-medium">
               {result.target_language_name}
             </span>
-            <span className="ml-auto text-xs text-gray-400 dark:text-gray-500">
+            {/* <span className="ml-auto text-xs text-gray-400 dark:text-gray-500">
               {(result.total_processing_time ?? 0).toFixed(2)}s processing time
-            </span>
+            </span> */}
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">

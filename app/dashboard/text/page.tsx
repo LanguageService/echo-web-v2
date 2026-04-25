@@ -126,7 +126,7 @@ export default function TextTranslation({ text, isInput = false }: TextTranslati
                   </div>
                   <div className="flex flex-col sm:items-end gap-1">
                     <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(item.date_created)}</span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500">{item.total_processing_time.toFixed(2)}s processing time</span>
+                    {/* <span className="text-xs text-gray-400 dark:text-gray-500">{item.total_processing_time.toFixed(2)}s processing time</span> */}
                   </div>
                 </div>
 
