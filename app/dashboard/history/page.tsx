@@ -6,7 +6,7 @@ import { fetchRecentTranslations, type GeneralVoiceTranslationHistory } from "@/
 import { useToast } from "@/hooks/useToast";
 import { ArrowLeft, Clock, ArrowRight, Volume2, Copy } from "lucide-react";
 
-const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 teex=5 reference-tracker>xt-sm text-gray-600 dark:text-gray-400 hover:text-eference-tracker>or<mark marker-index=2 reference-tracker>ange-500 dark:hover:text-orange-400 transition-colors";
+const btnClass = "cursor-pointer border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 teex=5 reference-tracker>xt-sm text-gray-600 dark:text-gray-400 hover:text-eference-tracker>or<mark marker-index=2 reference-tracker>ange-500 dark:hover:text-orange-400 transition-colors";
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -140,11 +140,11 @@ export default function HistoryPage() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {item.original_audio_url && (
-                        <button onClick={() => new Audio(item.original_audio_url!).play()} className={btnClass}>
-                          <Volume2 size={16} /> Listen
-                        </button>
-                      )}
+                      {/* {item.original_audio_url && ( */}
+                      <button onClick={() => new Audio(item.original_audio_url!).play()} className={btnClass}>
+                        <Volume2 size={16} /> Listen
+                      </button>
+                      {/* )} */}
                       <button
                         onClick={async () => { await navigator.clipboard.writeText(item.original_text); toast("Text copied successfully!"); }}
                         className={btnClass}
@@ -163,11 +163,11 @@ export default function HistoryPage() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {item.translated_audio_url && (
-                        <button onClick={() => new Audio(item.translated_audio_url!).play()} className={btnClass}>
-                          <Volume2 size={16} /> Listen
-                        </button>
-                      )}
+                      {/* {item.translated_audio_url && ( */}
+                      <button onClick={() => new Audio(item.translated_audio_url!).play()} className={btnClass}>
+                        <Volume2 size={16} /> Listen
+                      </button>
+                      {/* )} */}
                       <button
                         onClick={async () => { await navigator.clipboard.writeText(item.translated_text); toast("Text copied successfully!"); }}
                         className={btnClass}

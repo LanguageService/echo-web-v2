@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { fetchRecentTranslations, type GeneralVoiceTranslationHistory } from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
 
-const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors";
+const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors cursor-pointer";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -110,11 +110,11 @@ export default function Dashboard() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {item.original_audio_url && (
-                        <button onClick={() => new Audio(item.original_audio_url!).play()} className={btnClass}>
-                          <Volume2 size={16} /> Listen
-                        </button>
-                      )}
+                      {/* {item.original_audio_url && ( */}
+                      <button onClick={() => new Audio(item.original_audio_url!).play()} className={btnClass}>
+                        <Volume2 size={16} /> Listen
+                      </button>
+                      {/* )} */}
                       <button onClick={async () => { await navigator.clipboard.writeText(item.original_text); toast("Text copied successfully!"); }} className={btnClass}>
                         <Copy size={16} /> Copy
                       </button>
@@ -130,11 +130,11 @@ export default function Dashboard() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {item.translated_audio_url && (
-                        <button onClick={() => new Audio(item.translated_audio_url!).play()} className={btnClass}>
-                          <Volume2 size={16} /> Listen
-                        </button>
-                      )}
+                      {/* {item.translated_audio_url && ( */}
+                      <button onClick={() => new Audio(item.translated_audio_url!).play()} className={btnClass}>
+                        <Volume2 size={16} /> Listen
+                      </button>
+                      {/* )} */}
                       <button onClick={async () => { await navigator.clipboard.writeText(item.translated_text); toast("Text copied successfully!"); }} className={btnClass}>
                         <Copy size={16} /> Copy
                       </button>
