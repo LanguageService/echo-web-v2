@@ -49,7 +49,7 @@ export default function TranslationCard({
       />
 
       <div className="flex justify-between items-center mt-6">
-        <button className="flex items-center gap-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-orange-500 hover:text-orange-500 dark:text-gray-400 dark:hover:border-orange-500 dark:hover:text-orange-400 transition-colors">
+        <button className="cursor-pointer flex items-center gap-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-orange-500 hover:text-orange-500 dark:text-gray-400 dark:hover:border-orange-500 dark:hover:text-orange-400 transition-colors">
           <Mic size={16} />
           <span className="text-sm">Listen</span>
         </button>
@@ -58,7 +58,7 @@ export default function TranslationCard({
 
         <button
           onClick={handleCopy}
-          className="flex items-center gap-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-orange-500 hover:text-orange-500 dark:text-gray-400 dark:hover:border-orange-500 dark:hover:text-orange-400 transition-colors"
+          className="cursor-pointer flex items-center gap-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:border-orange-500 hover:text-orange-500 dark:text-gray-400 dark:hover:border-orange-500 dark:hover:text-orange-400 transition-colors"
           title="Copy text"
         >
           <Copy size={16} />

@@ -8,7 +8,7 @@ import { translateText, fetchTranslationHistory, type Language, type Translation
 import { Clock, ArrowRight, Mic, Copy } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 
-const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors";
+const btnClass = "cursor-pointer border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors";
 
 interface TextTranslationProps {
   title?: string; text?: string; footer?: string;

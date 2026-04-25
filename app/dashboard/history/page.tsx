@@ -81,9 +81,9 @@ export default function HistoryPage() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${filter === f
+            className={`px-4 py-1.5 rounded-full cursor-pointer text-sm font-medium transition ${filter === f
               ? "bg-orange-500 text-white"
-              : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              : "bg-gray-100 border border-gray-300 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
           >
             {f === "ALL" ? "All" : f === "SPEECH_TRANSLATION" ? "🎙 Voice" : "📝 Text"}
