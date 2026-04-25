@@ -82,7 +82,7 @@ export default function SignUp() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-yellow-50 dark:from-gray-900 dark:to-gray-800 pb-20 safe-area-bottom">
       <div className=" flex items-center justify-center p-4 pt-8">
-        <Card className=" bg-[#eff4f5] w-full max-w-md">
+        <Card className="bg-[#eff4f5] dark:bg-gray-900 w-full max-w-md">
           <CardHeader className="text-center">
             <div
               onClick={handleBack}
@@ -213,25 +213,25 @@ export default function SignUp() {
               </button>
             </p>
             <div className="mt-8 flex items-center">
-              <hr className="flex-grow border-gray-300" />
-              <span className="mx-4 text-sm text-[#4D6680] whitespace-nowrap">
+              <hr className="flex-grow border-gray-300 dark:border-gray-600" />
+              <span className="mx-4 text-sm text-[#4D6680] dark:text-gray-400 whitespace-nowrap">
                 or continue with
               </span>
-              <hr className="flex-grow border-gray-300" />
+              <hr className="flex-grow border-gray-300 dark:border-gray-600" />
             </div>
 
-            {/* Social Buttons */}
             <div className="mt-6 grid grid-cols-3 justify-items-center">
-              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] hover:bg-[#F5FAFB] transition-colors">
+              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] dark:border-gray-600 hover:bg-[#F5FAFB] dark:hover:bg-gray-800 transition-colors">
                 <img src="/google.svg" alt="Google" className="w-5 h-5" />
               </button>
-              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] hover:bg-[#F5FAFB] transition-colors">
+              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] dark:border-gray-600 hover:bg-[#F5FAFB] dark:hover:bg-gray-800 transition-colors">
                 <img src="/facebook.svg" alt="Facebook" className="w-5 h-5" />
               </button>
-              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] hover:bg-[#F5FAFB] transition-colors">
+              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] dark:border-gray-600 hover:bg-[#F5FAFB] dark:hover:bg-gray-800 transition-colors">
                 <img src="/apple.svg" alt="Apple" className="w-5 h-5" />
               </button>
             </div>
+
           </CardContent>
         </Card>
       </div>
