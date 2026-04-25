@@ -5,106 +5,66 @@ import Sidebar from "@/components/Sidebar";
 import { fetchUserProfile, type UserProfile } from "@/lib/api";
 import { useTheme } from "next-themes";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<UserProfile | null>(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setOpen(window.innerWidth >= 768);
-    };
+    const handleResize = () => setOpen(window.innerWidth >= 768);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [user, setUser] = useState<UserProfile | null>(null);
-
   useEffect(() => {
-    fetchUserProfile()
-      .then(setUser)
-      .catch(() => { });
+    fetchUserProfile().then(setUser).catch(() => { });
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-50 relative">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-950 relative">
       {/* Sidebar */}
-      <div
-        className={`
-          fixed z-40 inset-y-0 left-0 w-72 bg-white border-r border-[#b9ced5]
-          transform transition-transform duration-300 ease-in-out
-          ${open ? "translate-x-0" : "-translate-x-72"}
-        `}
-      >
-        <Sidebar
-          onToggle={() => setOpen(!open)}
-          onItemClick={() => setOpen(false)}
-        />
+      <div className={`fixed z-40 inset-y-0 left-0 w-72 bg-white dark:bg-gray-900 border-r border-[#b9ced5] dark:border-gray-700 transform transition-transform duration-300 ease-in-out ${open ? "translate-x-0" : "-translate-x-72"}`}>
+        <Sidebar onToggle={() => setOpen(!open)} onItemClick={() => setOpen(false)} />
       </div>
 
       {/* Overlay for mobile */}
-      {open && (
-        <div
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          onClick={() => setOpen(false)}
-        />
-      )}
+      {open && <div className="fixed inset-0 bg-black/40 z-30 md:hidden" onClick={() => setOpen(false)} />}
 
       {/* Main content */}
-      <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${open ? "md:ml-72" : "ml-0"}`}
-      >
+      <div className={`flex-1 flex flex-col transition-all duration-300 ${open ? "md:ml-72" : "ml-0"}`}>
         {/* Top bar */}
-        <div className="sticky top-0 z-50 bg-white border-b border-[#b9ced5]">
+        <div className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-[#b9ced5] dark:border-gray-700">
           <div className="flex items-center px-4 sm:px-6 lg:px-8 py-3 gap-3">
 
             {/* Left: hamburger + greeting */}
             <div className="flex items-center gap-3 flex-1">
               <button
                 onClick={() => setOpen(!open)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors shrink-0"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors shrink-0"
               >
-                <Menu size={20} />
+                <Menu size={20} className="dark:text-white" />
               </button>
-
               <div className="hidden sm:flex flex-col">
-                <p className="font-semibold text-sm text-[#0C141D] leading-tight">
+                <p className="font-semibold text-sm text-[#0C141D] dark:text-white leading-tight">
                   Hi, {user ? user.first_name : "..."} 👋
                 </p>
-                <p className="text-xs text-[#667085]">Welcome back</p>
+                <p className="text-xs text-[#667085] dark:text-gray-400">Welcome back</p>
               </div>
             </div>
 
             {/* Right: theme toggle + premium + avatar */}
             <div className="flex items-center gap-2">
-              {/* <button
-                onClick={() => setDarkMode(!darkMode)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-[#667085]"
-                title="Toggle theme"
-              >
-                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-              </button> */}
-
               <button
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-[#667085]"
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-[#667085] dark:text-gray-400"
                 title="Toggle theme"
               >
                 {mounted ? (theme === "dark" ? <Sun size={18} /> : <Moon size={18} />) : <Moon size={18} />}
               </button>
-
-
 
               <button className="flex items-center gap-1.5 bg-gradient-to-r from-[#F79009] to-[#f5a623] hover:from-[#E68200] hover:to-[#e09500] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all duration-200 hover:shadow-md">
                 <Sparkles size={14} />
@@ -112,8 +72,8 @@ export default function DashboardLayout({
                 <span className="sm:hidden">Pro</span>
               </button>
 
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-base shrink-0 ring-2 ring-white shadow-sm">
-                👨‍💼
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/40 dark:to-orange-800/40 flex items-center justify-center text-sm font-bold text-orange-500 shrink-0 ring-2 ring-white dark:ring-gray-900 shadow-sm">
+                {user ? user.first_name[0].toUpperCase() : "?"}
               </div>
             </div>
 
@@ -122,7 +82,7 @@ export default function DashboardLayout({
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-2 lg:p-2">
-          <div className="min-h-screen african-geometric-pattern bg-background">
+          <div className="min-h-screen african-geometric-pattern bg-background dark:bg-transparent">
             {children}
           </div>
         </main>
