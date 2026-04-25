@@ -516,6 +516,8 @@ export async function fetchRecentTranslations(): Promise<RecentTranslationsRespo
 
     const voiceData = voiceResponse.ok ? await voiceResponse.json() : [];
     const textData = textResponse.ok ? await textResponse.json() : [];
+    console.log("Voice data:", voiceData);
+    console.log("Text data:", textData);
 
     // Combine and format the data
     const voiceTranslations = (
@@ -536,14 +538,12 @@ export async function fetchRecentTranslations(): Promise<RecentTranslationsRespo
       audio_files: [],
     }));
 
-    // Combine and sort by date
-    // const allTranslations = [...voiceTranslations, ...textTranslations].sort(
-    //   (a, b) =>
-    //     new Date(b.date_created).getTime() - new Date(a.date_created).getTime(),
-    // );
+
 
     const allTranslations = [...voiceTranslations, ...textTranslations]
-      .filter((item, index, self) => self.findIndex(t => t.id === item.id) === index)
+      .filter((item, index, self) =>
+        self.findIndex(t => t.id === item.id && t.feature_type === item.feature_type) === index
+      )
       .sort(
         (a, b) =>
           new Date(b.date_created).getTime() - new Date(a.date_created).getTime(),
