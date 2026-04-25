@@ -6,14 +6,12 @@ import Footer from "./components/Footer";
 
 export default function HomePage() {
   return (
-    <>
-      <div className="w-full bg-gray-50 text-gray-900">
-        <NavBar />
-        <Hero />
-        <Pricing />
-        <Languages />
-        <Footer />
-      </div>
-    </>
+    <div className="w-full bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white">
+      <NavBar />
+      <Hero />
+      <Pricing />
+      <Languages />
+      <Footer />
+    </div>
   );
 }
