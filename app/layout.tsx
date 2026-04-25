@@ -5,6 +5,8 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ThemeProvider } from "next-themes";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,24 +29,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* <script
           src="https://ternkonnect-widget.vercel.app/widget.js"
           data-account="Y4TeKv2Ybm"
         ></script> */}
 
-        <script
+        {/* <script
           src="https://cdn.ternkonnect.com/widget.js"
           data-account="Y4TeKv2Ybm"
-        ></script>
+        ></script> */}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* <NavBar /> */}
-        {children}
-        <ToastContainer />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+
+          {children}
+          <ToastContainer />
+        </ThemeProvider>
         {/* <Footer /> */}
       </body>
     </html>

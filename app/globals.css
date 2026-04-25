@@ -1,33 +1,5 @@
 @import "tailwindcss";
-/* 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.african-gradient {
-  background: linear-gradient(135deg, #f0c4421a, #e650191a, #45a1631a);
-} */
+@variant dark (&:where(.dark, .dark *));
 
 :root {
   /* Language learning themed color palette */
@@ -74,27 +46,22 @@ body {
 /* African geometric pattern */
 .african-geometric-pattern {
   background-image:
-    radial-gradient(
-      circle at 25% 25%,
+    radial-gradient(circle at 25% 25%,
       rgba(240, 196, 66, 0.08) 2px,
-      transparent 2px
-    ),
-    radial-gradient(
-      circle at 75% 75%,
+      transparent 2px),
+    radial-gradient(circle at 75% 75%,
       rgba(69, 161, 99, 0.08) 2px,
-      transparent 2px
-    );
+      transparent 2px);
   background-size: 20px 20px;
 }
 
 .african-gradient {
-  background: linear-gradient(
-    135deg,
-    hsl(45, 85%, 60%, 0.1) 0%,
-    hsl(16, 80%, 50%, 0.1) 50%,
-    hsl(140, 40%, 45%, 0.1) 100%
-  );
+  background: linear-gradient(135deg,
+      hsl(45, 85%, 60%, 0.1) 0%,
+      hsl(16, 80%, 50%, 0.1) 50%,
+      hsl(140, 40%, 45%, 0.1) 100%);
 }
+
 .dark {
   /* Language learning dark theme */
   --background: hsl(210, 35%, 6%);
@@ -148,62 +115,51 @@ body {
   /* Mobile-first responsive improvements */
   @media (max-width: 640px) {
     body {
-      font-size: 16px; /* Prevent iOS zoom on input focus */
+      font-size: 16px;
+      /* Prevent iOS zoom on input focus */
     }
   }
 }
 
 @layer components {
   .african-pattern {
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 8px,
-      hsl(16, 80%, 50%, 0.06) 8px,
-      hsl(16, 80%, 50%, 0.06) 16px
-    );
+    background-image: repeating-linear-gradient(45deg,
+        transparent,
+        transparent 8px,
+        hsl(16, 80%, 50%, 0.06) 8px,
+        hsl(16, 80%, 50%, 0.06) 16px);
   }
 
   .african-geometric-pattern {
     background-image:
-      radial-gradient(
-        circle at 25% 25%,
+      radial-gradient(circle at 25% 25%,
         hsl(45, 85%, 60%, 0.08) 2px,
-        transparent 2px
-      ),
-      radial-gradient(
-        circle at 75% 75%,
+        transparent 2px),
+      radial-gradient(circle at 75% 75%,
         hsl(140, 40%, 45%, 0.08) 2px,
-        transparent 2px
-      );
+        transparent 2px);
     background-size: 20px 20px;
   }
 
   .african-waves-pattern {
     background-image:
-      repeating-linear-gradient(
-        90deg,
+      repeating-linear-gradient(90deg,
         transparent,
         transparent 4px,
         hsl(30, 90%, 55%, 0.04) 4px,
-        hsl(30, 90%, 55%, 0.04) 8px
-      ),
-      repeating-linear-gradient(
-        0deg,
+        hsl(30, 90%, 55%, 0.04) 8px),
+      repeating-linear-gradient(0deg,
         transparent,
         transparent 4px,
         hsl(16, 80%, 50%, 0.04) 4px,
-        hsl(16, 80%, 50%, 0.04) 8px
-      );
+        hsl(16, 80%, 50%, 0.04) 8px);
   }
 
   .african-gradient {
-    background: linear-gradient(
-      135deg,
-      hsl(45, 85%, 60%, 0.1) 0%,
-      hsl(16, 80%, 50%, 0.1) 50%,
-      hsl(140, 40%, 45%, 0.1) 100%
-    );
+    background: linear-gradient(135deg,
+        hsl(45, 85%, 60%, 0.1) 0%,
+        hsl(16, 80%, 50%, 0.1) 50%,
+        hsl(140, 40%, 45%, 0.1) 100%);
   }
 
   .recording-pulse {
@@ -254,6 +210,7 @@ body {
       transform: translateY(20px);
       opacity: 0;
     }
+
     to {
       transform: translateY(0);
       opacity: 1;
@@ -291,29 +248,36 @@ body {
   }
 
   @keyframes world-orbit {
+
     0%,
     100% {
       transform: rotate(0deg) scale(1) translateY(0px);
     }
+
     25% {
       transform: rotate(90deg) scale(1.05) translateY(-2px);
     }
+
     50% {
       transform: rotate(180deg) scale(1.1) translateY(0px);
     }
+
     75% {
       transform: rotate(270deg) scale(1.05) translateY(2px);
     }
   }
 
   @keyframes world-dance {
+
     0%,
     100% {
       transform: rotate(0deg) scale(1.1) translateY(0px);
     }
+
     33% {
       transform: rotate(120deg) scale(1.15) translateY(-4px);
     }
+
     66% {
       transform: rotate(240deg) scale(1.2) translateY(4px);
     }
@@ -333,16 +297,20 @@ body {
   }
 
   @keyframes gentle-wobble {
+
     0%,
     100% {
       transform: rotate(0deg) scale(1);
     }
+
     25% {
       transform: rotate(5deg) scale(1.05);
     }
+
     50% {
       transform: rotate(0deg) scale(1.1);
     }
+
     75% {
       transform: rotate(-5deg) scale(1.05);
     }
@@ -350,14 +318,12 @@ body {
 
   /* Artistic ECHO text with language theme */
   .echo-text {
-    background: linear-gradient(
-      120deg,
-      hsl(175, 65%, 40%) 0%,
-      hsl(45, 85%, 58%) 25%,
-      hsl(15, 75%, 55%) 50%,
-      hsl(175, 65%, 40%) 75%,
-      hsl(45, 85%, 58%) 100%
-    );
+    background: linear-gradient(120deg,
+        hsl(175, 65%, 40%) 0%,
+        hsl(45, 85%, 58%) 25%,
+        hsl(15, 75%, 55%) 50%,
+        hsl(175, 65%, 40%) 75%,
+        hsl(45, 85%, 58%) 100%);
     background-size: 400% 400%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -370,19 +336,23 @@ body {
   }
 
   @keyframes artistic-flow {
+
     0%,
     100% {
       background-position: 0% 50%;
       transform: perspective(1000px) rotateX(10deg) scale(1);
     }
+
     25% {
       background-position: 50% 0%;
       transform: perspective(1000px) rotateX(5deg) scale(1.02);
     }
+
     50% {
       background-position: 100% 50%;
       transform: perspective(1000px) rotateX(0deg) scale(1.05);
     }
+
     75% {
       background-position: 50% 100%;
       transform: perspective(1000px) rotateX(5deg) scale(1.02);
@@ -407,25 +377,27 @@ body {
   .waveform-bar:nth-child(1) {
     animation-delay: 0s;
   }
+
   .waveform-bar:nth-child(2) {
     animation-delay: 0.1s;
   }
+
   .waveform-bar:nth-child(3) {
     animation-delay: 0.2s;
   }
+
   .waveform-bar:nth-child(4) {
     animation-delay: 0.3s;
   }
+
   .waveform-bar:nth-child(5) {
     animation-delay: 0.4s;
   }
 
   .language-toggle {
-    background: linear-gradient(
-      135deg,
-      hsl(20, 65%, 45%) 0%,
-      hsl(25, 85%, 62%) 100%
-    );
+    background: linear-gradient(135deg,
+        hsl(20, 65%, 45%) 0%,
+        hsl(25, 85%, 62%) 100%);
   }
 
   .translation-card {
@@ -445,10 +417,12 @@ body {
     transform: scale(1);
     box-shadow: 0 0 0 0 hsl(0, 70%, 55%, 0.7);
   }
+
   70% {
     transform: scale(1.05);
     box-shadow: 0 0 0 20px hsl(0, 70%, 55%, 0);
   }
+
   100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 hsl(0, 70%, 55%, 0);
@@ -456,11 +430,13 @@ body {
 }
 
 @keyframes waveform {
+
   0%,
   40%,
   100% {
     height: 8px;
   }
+
   20% {
     height: 32px;
   }
@@ -471,6 +447,7 @@ body {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

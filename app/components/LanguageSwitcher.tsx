@@ -5,6 +5,22 @@ import { useState, useEffect, useRef, useCallback } from "react";
 // import { fetchLanguages, type Language } from "@/lib/api";
 import { fetchTextLanguages, type Language } from "@/lib/api";
 
+import ReactCountryFlag from "react-country-flag";
+
+const languageToCountry: Record<string, string> = {
+  EN: "GB",
+  RW: "RW",
+  FR: "FR",
+  AR: "SA",
+  PT: "PT",
+  ES: "ES",
+  HA: "NG",
+  IG: "NG",
+  SW: "TZ",
+  YO: "NG",
+};
+
+
 interface LanguageSwitcherProps {
   onLanguageChange?: (inputLang: Language, outputLang: Language) => void;
 }
@@ -81,7 +97,9 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
   return (
     <div className="bg-white p-4 rounded-xl border border-[#b9ced5] flex items-center justify-center gap-4">
       <Language
-        label={`${inputLang.flag_emoji} ${inputLang.name}`}
+        // label={`${inputLang.flag_emoji} ${inputLang.name}`}
+        code={inputLang.code}
+        label={inputLang.name}
         isOpen={showInputDropdown}
         onToggle={() => {
           setShowInputDropdown(!showInputDropdown);
@@ -99,7 +117,9 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
       </button>
 
       <Language
-        label={`${outputLang.flag_emoji} ${outputLang.name}`}
+        code={outputLang.code}
+        label={outputLang.name}
+        // label={`${outputLang.flag_emoji} ${outputLang.name}`}
         orange
         isOpen={showOutputDropdown}
         onToggle={() => {
@@ -114,6 +134,7 @@ function LanguageSwitcher({ onLanguageChange }: LanguageSwitcherProps) {
 }
 
 function Language({
+  code,
   label,
   orange,
   isOpen,
@@ -121,6 +142,7 @@ function Language({
   onSelect,
   languages,
 }: {
+  code: string;
   label: string;
   orange?: boolean;
   isOpen?: boolean;
@@ -132,10 +154,14 @@ function Language({
     <div className="relative">
       <button
         onClick={onToggle}
-        className={`px-4 py-2 rounded-lg border flex items-center gap-2 hover:bg-gray-50 transition ${
-          orange ? "border-orange-200 bg-orange-50" : "border-gray-200"
-        }`}
+        className={`px-4 py-2 rounded-lg border flex items-center gap-2 hover:bg-gray-50 transition ${orange ? "border-orange-200 bg-orange-50" : "border-gray-200"
+          }`}
       >
+        <ReactCountryFlag
+          countryCode={languageToCountry[code.toUpperCase()] ?? code.toUpperCase()}
+          svg
+          style={{ width: "1.2em", height: "1.2em" }}
+        />
         <span className="text-sm font-medium">{label}</span>
         <ChevronDown className="w-4 h-4" />
       </button>
@@ -145,13 +171,14 @@ function Language({
           {languages.map((lang) => (
             <button
               key={lang.code}
-              onClick={() => {
-                console.log("Language clicked:", lang);
-                onSelect?.(lang);
-              }}
+              onClick={() => onSelect?.(lang)}
               className="w-full px-4 py-2 text-left hover:bg-gray-50 text-sm flex items-center gap-2 border-b border-gray-100 last:border-b-0"
             >
-              <span>{lang.flag_emoji}</span>
+              <ReactCountryFlag
+                countryCode={languageToCountry[lang.code.toUpperCase()] ?? lang.code.toUpperCase()}
+                svg
+                style={{ width: "1.2em", height: "1.2em" }}
+              />
               <span>{lang.name}</span>
             </button>
           ))}
@@ -160,5 +187,6 @@ function Language({
     </div>
   );
 }
+
 
 export default LanguageSwitcher;

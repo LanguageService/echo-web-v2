@@ -139,7 +139,7 @@ export default function TextTranslation({
 
       <div className="grid lg:grid-cols-2 gap-6">
         <TranslationCard
-          title={`Source (${selectedLanguages.input?.code?.toUpperCase() || "EN"})`}
+          title={`Source (${selectedLanguages.input?.name || "EN"})`}
           isInput={true}
           onTextChange={handleInputChange}
           placeholder="Type your text here to translate..."
@@ -148,7 +148,7 @@ export default function TextTranslation({
         />
 
         <TranslationCard
-          title={`Translation (${selectedLanguages.output?.code?.toUpperCase() || "RW"})`}
+          title={`Translation (${selectedLanguages.output?.name || "RW"})`}
           text={translatedText || "Translation will appear here..."}
           onCopy={() => toast("Text copied successfully!")}
         />

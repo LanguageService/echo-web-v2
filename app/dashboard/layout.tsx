@@ -1,15 +1,9 @@
 "use client";
-import { Moon, Menu } from "lucide-react";
+import { Moon, Sun, Menu, Sparkles } from "lucide-react";
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
-
-interface ProfileHeaderProps {
-  firstName: string;
-  lastName: string;
-  email: string;
-  profilePicture: string | null;
-  onMenuToggle?: () => void;
-}
+import { fetchUserProfile, type UserProfile } from "@/lib/api";
+import { useTheme } from "next-themes";
 
 export default function DashboardLayout({
   children,
@@ -17,33 +11,30 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setOpen(true);
-      } else {
-        setOpen(false);
-      }
+      setOpen(window.innerWidth >= 768);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setOpen(true);
-      } else {
-        setOpen(false);
-      }
-    };
+  const [user, setUser] = useState<UserProfile | null>(null);
 
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+  useEffect(() => {
+    fetchUserProfile()
+      .then(setUser)
+      .catch(() => { });
   }, []);
 
   return (
@@ -56,7 +47,6 @@ export default function DashboardLayout({
           ${open ? "translate-x-0" : "-translate-x-72"}
         `}
       >
-        {/* <Sidebar /> */}
         <Sidebar
           onToggle={() => setOpen(!open)}
           onItemClick={() => setOpen(false)}
@@ -73,39 +63,60 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div
-        className={`
-          flex-1 flex flex-col transition-margin duration-300
-          ${open ? "ml-72" : "ml-0"}
-        `}
+        className={`flex-1 flex flex-col transition-all duration-300 ${open ? "md:ml-72" : "ml-0"}`}
       >
         {/* Top bar */}
-        <div className="sticky top-0 flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 border-b border-[#b9ced5] bg-white z-50">
-          <button
-            onClick={() => setOpen(!open)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <Menu size={20} />
-          </button>
-          {/* User */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#F2F4F7] flex items-center justify-center">
-              👨‍💼
-            </div>
-            <div>
-              <p className="font-semibold text-sm text-[#0C141D]">
-                Hi, John 👋
-              </p>
-              <p className="text-xs text-[#667085]">Welcome back</p>
-            </div>
-          </div>
+        <div className="sticky top-0 z-50 bg-white border-b border-[#b9ced5]">
+          <div className="flex items-center px-4 sm:px-6 lg:px-8 py-3 gap-3">
 
-          {/* Right */}
-          <div className="flex items-center gap-4">
-            <Moon className="w-5 h-5 text-[#667085]" />
+            {/* Left: hamburger + greeting */}
+            <div className="flex items-center gap-3 flex-1">
+              <button
+                onClick={() => setOpen(!open)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors shrink-0"
+              >
+                <Menu size={20} />
+              </button>
 
-            <button className="bg-[#F79009] hover:bg-[#E68200] text-white px-5 py-2 rounded-full text-sm font-semibold shadow">
-              Try Premium
-            </button>
+              <div className="hidden sm:flex flex-col">
+                <p className="font-semibold text-sm text-[#0C141D] leading-tight">
+                  Hi, {user ? user.first_name : "..."} 👋
+                </p>
+                <p className="text-xs text-[#667085]">Welcome back</p>
+              </div>
+            </div>
+
+            {/* Right: theme toggle + premium + avatar */}
+            <div className="flex items-center gap-2">
+              {/* <button
+                onClick={() => setDarkMode(!darkMode)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-[#667085]"
+                title="Toggle theme"
+              >
+                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+              </button> */}
+
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-[#667085]"
+                title="Toggle theme"
+              >
+                {mounted ? (theme === "dark" ? <Sun size={18} /> : <Moon size={18} />) : <Moon size={18} />}
+              </button>
+
+
+
+              <button className="flex items-center gap-1.5 bg-gradient-to-r from-[#F79009] to-[#f5a623] hover:from-[#E68200] hover:to-[#e09500] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all duration-200 hover:shadow-md">
+                <Sparkles size={14} />
+                <span className="hidden sm:inline">Try Premium</span>
+                <span className="sm:hidden">Pro</span>
+              </button>
+
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-base shrink-0 ring-2 ring-white shadow-sm">
+                👨‍💼
+              </div>
+            </div>
+
           </div>
         </div>
 

@@ -3,6 +3,20 @@
 import { ArrowLeftRight, Mic, Square } from "lucide-react";
 import { useState, useRef } from "react";
 import TranslationResult from "@/components/TranslationResult";
+import ReactCountryFlag from "react-country-flag";
+
+const languageToCountry: Record<string, string> = {
+  EN: "GB",
+  RW: "RW",
+  FR: "FR",
+  AR: "SA",
+  PT: "PT",
+  ES: "ES",
+  HA: "NG",
+  IG: "NG",
+  SW: "TZ",
+  YO: "NG",
+};
 
 interface SelectedLanguages {
   input: {
@@ -275,6 +289,7 @@ export default function VoiceCard({
 
         <div className="relative flex flex-col sm:flex-row items-center sm:justify-between mb-8 sm:mb-16 gap-4 sm:gap-0">
           <Lang
+            code={inputLang.code}
             label={`${inputLang.code.toUpperCase()} ${inputLang.name}`}
             sub="INPUT"
             color="green"
@@ -283,12 +298,12 @@ export default function VoiceCard({
             <ArrowLeftRight size={18} className="sm:text-base" />
           </div>
           <Lang
+            code={outputLang.code}
             label={`${outputLang.code.toUpperCase()} ${outputLang.name}`}
             sub="OUTPUT"
             color="orange"
           />
         </div>
-
         <div className="relative flex flex-col items-center text-center gap-4 sm:gap-6">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold">
             {isRecording
@@ -325,13 +340,12 @@ export default function VoiceCard({
             <button
               onClick={handleMicClick}
               disabled={isLoading}
-              className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl transition-all duration-75 ${
-                isRecording
-                  ? "bg-red-500 shadow-red-300 animate-pulse"
-                  : isLoading
-                    ? "bg-gray-400"
-                    : "bg-green-500 shadow-green-300 hover:scale-110"
-              }`}
+              className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl transition-all duration-75 ${isRecording
+                ? "bg-red-500 shadow-red-300 animate-pulse"
+                : isLoading
+                  ? "bg-gray-400"
+                  : "bg-green-500 shadow-green-300 hover:scale-110"
+                }`}
               style={{
                 transform: isRecording
                   ? `scale(${1.1 + (audioLevel / 255) * 0.8}) rotate(${(audioLevel / 255) * 10 - 5}deg)`
@@ -378,10 +392,12 @@ export default function VoiceCard({
 }
 
 function Lang({
+  code,
   label,
   sub,
   color,
 }: {
+  code: string;
   label: string;
   sub: string;
   color: "green" | "orange";
@@ -389,13 +405,16 @@ function Lang({
   return (
     <div className="flex flex-col items-center gap-1 sm:gap-2">
       <div
-        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl ${
-          color === "green"
-            ? "bg-green-100 text-green-600"
-            : "bg-orange-100 text-orange-500"
-        }`}
+        className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center ${color === "green"
+          ? ""
+          : ""
+          }`}
       >
-        ⚑
+        <ReactCountryFlag
+          countryCode={languageToCountry[code.toUpperCase()] ?? code.toUpperCase()}
+          svg
+          style={{ width: "1.8em", height: "1.8em" }}
+        />
       </div>
       <span className="font-semibold text-sm sm:text-base">{label}</span>
       <span className="text-xs sm:text-sm text-gray-400">{sub}</span>

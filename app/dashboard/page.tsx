@@ -179,11 +179,11 @@ export default function Dashboard() {
                   <span className="text-xs text-gray-400">
                     {item.total_processing_time.toFixed(2)}s processing time
                   </span>
-                  {item.confidence_score > 0 && (
+                  {/* {item.confidence_score > 0 && (
                     <span className="text-xs text-green-600">
                       {item.confidence_score}% confidence
                     </span>
-                  )}
+                  )} */}
                 </div>
               </div>
 
