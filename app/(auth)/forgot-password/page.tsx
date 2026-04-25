@@ -63,7 +63,7 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-yellow-50 dark:from-gray-900 dark:to-gray-800 pb-20 safe-area-bottom">
       <div className="flex items-center justify-center p-4 pt-8">
-        <Card className="bg-[#eff4f5] w-full max-w-md">
+        <Card className="bg-[#eff4f5] dark:bg-gray-900 w-full max-w-md">
           <CardHeader className="text-center">
             <div className="flex items-center justify-between mb-4">
               <Button
