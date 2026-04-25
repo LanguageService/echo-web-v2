@@ -3,7 +3,6 @@
 import { MicOff } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { popularLanguages } from "@/lib/languages";
 import { fetchVoiceLanguages, type Language } from "@/lib/api";
 import Badge from "@/components/Badge";
 import LangCard from "@/components/LangCard";
@@ -21,12 +20,8 @@ export default function LanguageSelection() {
     try {
       const data = await fetchVoiceLanguages();
       setLanguages(data.languages);
-      setInputLang(
-        data.languages.find((l) => l.code === "en") || data.languages[0],
-      );
-      setOutputLang(
-        data.languages.find((l) => l.code === "rw") || data.languages[1],
-      );
+      setInputLang(data.languages.find((l) => l.code === "en") || data.languages[0]);
+      setOutputLang(data.languages.find((l) => l.code === "rw") || data.languages[1]);
     } catch {
       setError("Failed to load languages. Please try again.");
     } finally {
@@ -34,9 +29,7 @@ export default function LanguageSelection() {
     }
   };
 
-  useEffect(() => {
-    loadLanguages();
-  }, []);
+  useEffect(() => { loadLanguages(); }, []);
 
   const swapLanguages = () => {
     setInputLang(outputLang);
@@ -44,14 +37,13 @@ export default function LanguageSelection() {
   };
 
   return (
-    <main className="min-h-screen african-geometric-pattern bg-background px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6 pb-40">
+    <main className="min-h-screen african-geometric-pattern bg-background dark:bg-transparent px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6 pb-40">
       <div className="mt-14 text-center max-w-2xl mx-auto">
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0C141D]">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0C141D] dark:text-white">
           Choose two languages
         </h1>
-        <p className="mt-2 text-sm sm:text-base text-[#667085]">
-          Select any two languages you want to translate between. You can swap
-          the direction later or let us auto-detect.
+        <p className="mt-2 text-sm sm:text-base text-[#667085] dark:text-gray-400">
+          Select any two languages you want to translate between. You can swap the direction later or let us auto-detect.
         </p>
       </div>
 
@@ -68,10 +60,7 @@ export default function LanguageSelection() {
       ) : loading ? (
         <div className="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 max-w-4xl mx-auto">
           {[1, 2].map((i) => (
-            <div
-              key={i}
-              className="h-40 bg-gray-200 animate-pulse rounded-xl"
-            />
+            <div key={i} className="h-40 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-xl" />
           ))}
         </div>
       ) : (
@@ -100,42 +89,19 @@ export default function LanguageSelection() {
         </div>
       )}
 
-      {/* <div className="mt-14 max-w-4xl mx-auto">
-        <h3 className="font-semibold text-[#0C141D] mb-4">
-          Recently Used & Popular
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-          {popularLanguages.map((lang) => (
-            <div
-              key={lang.name}
-              className={`w-full rounded-xl border border-[#b9ced5] p-3 sm:p-4 text-center ${lang.disabled
-                ? "opacity-40"
-                : "hover:border-[#F79009] cursor-pointer"
-                }`}
-            >
-              <div className="font-semibold text-sm">{lang.code}</div>
-              <div className="text-xs text-[#667085] mt-1">{lang.name}</div>
-            </div>
-          ))}
-        </div>
-      </div> */}
-
+      {/* Bottom bar */}
       <div className="fixed bottom-4 left-4 right-4 sm:left-6 sm:right-6 lg:left-72 lg:right-10">
-        <div className="bg-white border border-[#b9ced5] rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
+        <div className="bg-white dark:bg-gray-900 border border-[#b9ced5] dark:border-gray-700 rounded-2xl shadow-sm p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-            {inputLang && (
-              <Badge code={inputLang.code} label={inputLang.name} />
-            )}
+            {inputLang && <Badge code={inputLang.code} label={inputLang.name} />}
             <button
-              className="w-10 h-10 rounded-full bg-[#F2F4F7] hover:bg-[#E5E7EB] flex items-center justify-center cursor-pointer transition-colors"
+              className="w-10 h-10 rounded-full bg-[#F2F4F7] dark:bg-gray-700 hover:bg-[#E5E7EB] dark:hover:bg-gray-600 flex items-center justify-center cursor-pointer transition-colors dark:text-white"
               onClick={swapLanguages}
               disabled={!inputLang || !outputLang}
             >
               ↔
             </button>
-            {outputLang && (
-              <Badge code={outputLang.code} label={outputLang.name} />
-            )}
+            {outputLang && <Badge code={outputLang.code} label={outputLang.name} />}
           </div>
           <Link
             href={
@@ -146,7 +112,7 @@ export default function LanguageSelection() {
           >
             <button
               disabled={!inputLang || !outputLang}
-              className="w-full sm:w-auto bg-[#F79009] hover:bg-[#E68200] disabled:bg-gray-300 text-white px-6 sm:px-8 py-3 rounded-full text-sm font-semibold shadow flex items-center justify-center gap-2"
+              className="w-full sm:w-auto bg-[#F79009] hover:bg-[#E68200] disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white px-6 sm:px-8 py-3 rounded-full text-sm font-semibold shadow flex items-center justify-center gap-2"
             >
               <MicOff className="w-4 h-4" />
               Start Translating
