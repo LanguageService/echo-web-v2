@@ -142,20 +142,20 @@ export default function BillingDashboardPage() {
                 ))
               ) : transactions.length > 0 ? transactions.map((t) => (
                 <tr key={t.id} className="hover:bg-gray-800/50 transition">
-                  <td className="px-6 py-4 whitespace-nowrap text-gray-300">{formatDate(t.created)}</td>
-                  <td className="px-6 py-4 text-gray-400 max-w-xs truncate">
+                  <td className="px-6 py-4 whitespace-nowrap text-gray-700 dark:text-gray-300">{formatDate(t.created)}</td>
+                  <td className="px-6 py-4 text-gray-600 dark:text-gray-400 max-w-xs truncate">
                     {t.initiated_by_admin && (
-                      <span className="mr-2 text-xs bg-yellow-900/40 text-yellow-400 px-1.5 py-0.5 rounded">Admin</span>
+                      <span className="mr-2 text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400 px-1.5 py-0.5 rounded">Admin</span>
                     )}
                     {t.notes || t.type}
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${t.flow === 'CREDIT' ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${t.flow === 'CREDIT' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'}`}>
                       {t.flow}
                     </span>
                   </td>
-                  <td className={`px-6 py-4 text-right font-mono font-semibold ${t.flow === 'CREDIT' ? 'text-green-400' : 'text-red-400'}`}>
-                    {t.flow === 'CREDIT' ? '+' : '-'}{t.amount}
+                  <td className={`px-6 py-4 text-right font-mono font-semibold ${t.flow === 'CREDIT' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {t.flow === 'CREDIT' ? '+' : '-'}{Number(t.amount).toFixed(2)}
                   </td>
                 </tr>
               )) : (
