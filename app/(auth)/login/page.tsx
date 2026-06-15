@@ -216,7 +216,6 @@ export default function Login() {
                 onError={() => {
                   toast.error("Google Login Failed");
                 }}
-                useOneTap
               />
             </div>
 

@@ -247,7 +247,6 @@ export default function SignUp() {
                 onError={() => {
                   toast.error("Google Login Failed");
                 }}
-                useOneTap
               />
             </div>
 

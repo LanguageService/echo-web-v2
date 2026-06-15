@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, Upload, X, Download, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
+import { FileText, Upload, X, Download, ArrowRight, CheckCircle, Loader2, ChevronDown, ChevronUp, FileSpreadsheet } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { hasSufficientBalance, type Language } from "@/lib/api";
 import NoFundsModal from "@/components/NoFundsModal";
@@ -25,14 +25,23 @@ export default function DocumentTranslationPage() {
   const [error, setError] = useState<string | null>(null);
   const [showNoFunds, setShowNoFunds] = useState(false);
   const [selectedLanguages, setSelectedLanguages] = useState<{ input: Language | null; output: Language | null }>({ input: null, output: null });
+  const [showFormats, setShowFormats] = useState(false);
 
-  const ACCEPTED_TYPES = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
-  const ACCEPTED_EXTENSIONS = ".pdf, .doc, .docx, .txt";
+  const ACCEPTED_TYPES = [
+    "application/pdf", 
+    "application/msword", 
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", 
+    "text/plain",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "text/csv"
+  ];
+  const ACCEPTED_EXTENSIONS = ".pdf, .doc, .docx, .txt, .xls, .xlsx, .csv";
   const MAX_SIZE_MB = 10;
 
   const handleFile = (selected: File) => {
-    if (!ACCEPTED_TYPES.includes(selected.type)) {
-      setError("Unsupported file type. Please upload a PDF, DOC, DOCX, or TXT file.");
+    if (!ACCEPTED_TYPES.includes(selected.type) && !selected.name.endsWith('.csv')) {
+      setError("Unsupported file type. Please upload a PDF, DOC, DOCX, TXT, XLS, XLSX, or CSV file.");
       return;
     }
     if (selected.size > MAX_SIZE_MB * 1024 * 1024) {
@@ -121,9 +130,28 @@ export default function DocumentTranslationPage() {
                 Browse File
                 <input type="file" accept={ACCEPTED_EXTENSIONS} className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
               </label>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                Supported: PDF, DOC, DOCX, TXT · Max {MAX_SIZE_MB}MB
-              </p>
+              <div className="mt-4 w-full max-w-sm text-left">
+                <button 
+                  onClick={() => setShowFormats(!showFormats)}
+                  className="flex items-center justify-center gap-2 w-full text-xs text-gray-500 dark:text-gray-400 font-medium py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer"
+                >
+                  <span>Supported File Formats & Limits</span>
+                  {showFormats ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                </button>
+                {showFormats && (
+                  <div className="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm text-xs text-gray-600 dark:text-gray-300">
+                    <ul className="space-y-2">
+                      <li className="flex items-center gap-2"><FileText size={14} className="text-orange-500" /> <strong>PDF Documents</strong> (.pdf)</li>
+                      <li className="flex items-center gap-2"><FileText size={14} className="text-blue-500" /> <strong>Word Documents</strong> (.doc, .docx)</li>
+                      <li className="flex items-center gap-2"><FileSpreadsheet size={14} className="text-green-600" /> <strong>Spreadsheets</strong> (.csv, .xls, .xlsx)</li>
+                      <li className="flex items-center gap-2"><FileText size={14} className="text-gray-500" /> <strong>Plain Text</strong> (.txt)</li>
+                      <li className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400">
+                        Maximum file size: <strong>{MAX_SIZE_MB}MB</strong>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

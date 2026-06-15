@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { fetchRecentTranslations, resolveMediaUrl, type GeneralVoiceTranslationHistory } from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
 
+import PlayAudioButton from "@/components/PlayAudioButton";
+
 const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors cursor-pointer";
 
 export default function Dashboard() {
@@ -97,7 +99,6 @@ export default function Dashboard() {
                 </div>
                 <div className="flex flex-col sm:items-end gap-1">
                   <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(item.date_created)}</span>
-                  {/* <span className="text-xs text-gray-400 dark:text-gray-500">{item.total_processing_time.toFixed(2)}s processing time</span> */}
                 </div>
               </div>
 
@@ -110,11 +111,7 @@ export default function Dashboard() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {item.original_audio_url && (
-                        <button onClick={() => new Audio(resolveMediaUrl(item.original_audio_url)!).play()} className={btnClass}>
-                          <Volume2 size={16} /> Listen
-                        </button>
-                      )}
+                      <PlayAudioButton audioUrl={item.original_audio_url} className={btnClass} />
                       <button onClick={async () => { await navigator.clipboard.writeText(item.original_text); toast("Text copied successfully!"); }} className={btnClass}>
                         <Copy size={16} /> Copy
                       </button>
@@ -130,11 +127,7 @@ export default function Dashboard() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {item.translated_audio_url && (
-                        <button onClick={() => new Audio(resolveMediaUrl(item.translated_audio_url)!).play()} className={btnClass}>
-                          <Volume2 size={16} /> Listen
-                        </button>
-                      )}
+                      <PlayAudioButton audioUrl={item.translated_audio_url} className={btnClass} />
                       <button onClick={async () => { await navigator.clipboard.writeText(item.translated_text); toast("Text copied successfully!"); }} className={btnClass}>
                         <Copy size={16} /> Copy
                       </button>

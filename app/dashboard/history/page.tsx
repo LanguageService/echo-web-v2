@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { fetchRecentTranslations, toggleFavorite, resolveMediaUrl, type GeneralVoiceTranslationHistory } from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
 import { ArrowLeft, Clock, ArrowRight, Volume2, Copy, Heart } from "lucide-react";
+import PlayAudioButton from "@/components/PlayAudioButton";
 
 const btnClass = "cursor-pointer border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors";
 
@@ -146,11 +147,7 @@ export default function HistoryPage() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {item.original_audio_url && (
-                        <button onClick={() => new Audio(resolveMediaUrl(item.original_audio_url)!).play()} className={btnClass}>
-                          <Volume2 size={16} /> Listen
-                        </button>
-                      )}
+                      <PlayAudioButton audioUrl={item.original_audio_url} className={btnClass} />
                       <button
                         onClick={async () => { await navigator.clipboard.writeText(item.original_text); toast("Text copied successfully!"); }}
                         className={btnClass}
@@ -169,11 +166,7 @@ export default function HistoryPage() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {item.translated_audio_url && (
-                        <button onClick={() => new Audio(resolveMediaUrl(item.translated_audio_url)!).play()} className={btnClass}>
-                          <Volume2 size={16} /> Listen
-                        </button>
-                      )}
+                      <PlayAudioButton audioUrl={item.translated_audio_url} className={btnClass} />
                       <button
                         onClick={async () => { await navigator.clipboard.writeText(item.translated_text); toast("Text copied successfully!"); }}
                         className={btnClass}
