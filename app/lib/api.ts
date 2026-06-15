@@ -278,7 +278,7 @@ export async function updateUserProfile(
 ): Promise<UserProfile> {
   const token = localStorage.getItem("token");
   const response = await fetch(`${API_BASE_URL}/user/users/${id}/`, {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
