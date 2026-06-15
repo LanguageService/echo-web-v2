@@ -290,7 +290,13 @@ export async function updateUserProfile(
     throw new Error("Failed to update profile");
   }
 
-  return response.json();
+  const json = await response.json();
+  if (json.data && json.data.user) {
+    return json.data.user;
+  } else if (json.data) {
+    return json.data;
+  }
+  return json;
 }
 
 export interface TextTranslationRequest {
