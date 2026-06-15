@@ -4,11 +4,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchRecentTranslations, toggleFavorite, resolveMediaUrl, type GeneralVoiceTranslationHistory } from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
-import { ArrowLeft, Clock, ArrowRight, Volume2, Copy, Heart } from "lucide-react";
+import { ArrowLeft, Heart, ArrowRight, Volume2, Copy, Clock } from "lucide-react";
 
 const btnClass = "cursor-pointer border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors";
 
-export default function HistoryPage() {
+export default function FavouritesPage() {
   const router = useRouter();
   const { toast, toasts } = useToast();
   const [history, setHistory] = useState<GeneralVoiceTranslationHistory[]>([]);
@@ -20,7 +20,7 @@ export default function HistoryPage() {
 
   const loadHistory = async () => {
     try {
-      const response = await fetchRecentTranslations();
+      const response = await fetchRecentTranslations(true);
       setHistory(response.results);
       setTotalCount(response.count);
     } catch {
@@ -68,7 +68,7 @@ export default function HistoryPage() {
         </button>
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Translation History
+            Favourites
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {totalCount} total translations
@@ -98,7 +98,7 @@ export default function HistoryPage() {
             No translations yet
           </h3>
           <p className="text-gray-500 dark:text-gray-500">
-            Start translating to build your history
+            Start translating to build your favourites list
           </p>
         </div>
       ) : (
@@ -125,7 +125,7 @@ export default function HistoryPage() {
                   <div className="flex items-center gap-2">
                     <button onClick={async () => {
                       const updated = await toggleFavorite(item.id);
-                      setHistory(history.map(h => h.id === item.id ? { ...h, is_favorite: updated } : h));
+                      setHistory(history.filter(h => h.id !== item.id || updated));
                       if(updated) toast("Added to favourites");
                     }} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition">
                       <Heart className={`w-5 h-5 ${item.is_favorite ? "fill-red-500 text-red-500" : "text-gray-400 dark:text-gray-500"}`} />

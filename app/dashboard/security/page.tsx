@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { changePassword } from "@/lib/api";
+import { useState, useEffect } from "react";
+import { changePassword, fetchUserProfile, type UserProfile } from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
-import { Eye, EyeOff, Shield, Save } from "lucide-react";
+import { Eye, EyeOff, Shield, Save, Info } from "lucide-react";
 
 const inputClass = "w-full p-2 sm:p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm sm:text-base pr-10 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500";
 
@@ -18,6 +18,18 @@ export default function SecurityPage() {
     old: false, new: false, confirm: false,
   });
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  useEffect(() => {
+    fetchUserProfile()
+      .then(setUser)
+      .catch(console.error)
+      .finally(() => setProfileLoading(false));
+  }, []);
+
+  const hasPassword = profileLoading ? null : (user?.has_password ?? false);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -63,10 +75,20 @@ export default function SecurityPage() {
 
       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 lg:p-6">
         <h2 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-white mb-4 sm:mb-6">
-          Change Password
+          {hasPassword === false ? "Set Password" : "Change Password"}
         </h2>
 
+        {hasPassword === false && (
+          <div className="flex items-start gap-3 p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg mb-2">
+            <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Your account uses Google Sign-In and has no password yet. You can set one below — no current password required.
+            </p>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+          {hasPassword === true && (
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Current Password
@@ -90,6 +112,7 @@ export default function SecurityPage() {
               </button>
             </div>
           </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -150,7 +173,7 @@ export default function SecurityPage() {
             ) : (
               <Save className="w-4 h-4" />
             )}
-            {loading ? "Changing..." : "Change Password"}
+            {loading ? "Saving..." : hasPassword === false ? "Set Password" : "Change Password"}
           </button>
         </form>
 

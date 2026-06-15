@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { FileText, Upload, X, Download, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { type Language } from "@/lib/api";
+import { hasSufficientBalance, type Language } from "@/lib/api";
+import NoFundsModal from "@/components/NoFundsModal";
 
 type TranslationStatus = "idle" | "uploading" | "processing" | "done" | "error";
 
@@ -22,6 +23,7 @@ export default function DocumentTranslationPage() {
   const [status, setStatus] = useState<TranslationStatus>("idle");
   const [result, setResult] = useState<DocumentResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showNoFunds, setShowNoFunds] = useState(false);
   const [selectedLanguages, setSelectedLanguages] = useState<{ input: Language | null; output: Language | null }>({ input: null, output: null });
 
   const ACCEPTED_TYPES = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain"];
@@ -52,16 +54,18 @@ export default function DocumentTranslationPage() {
 
   const handleTranslate = async () => {
     if (!file || !selectedLanguages.input || !selectedLanguages.output) return;
+    const sufficient = await hasSufficientBalance();
+    if (!sufficient) { setShowNoFunds(true); return; }
     setStatus("uploading");
     setError(null);
     try {
       const formData = new FormData();
-      formData.append("document_file", file);
+      formData.append("file", file);
       formData.append("source_language", selectedLanguages.input.code);
       formData.append("target_language", selectedLanguages.output.code);
       const token = localStorage.getItem("token");
       setStatus("processing");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/translations/document/base/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/translations/text/document-direct/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -194,6 +198,8 @@ export default function DocumentTranslationPage() {
           </div>
         </div>
       )}
+
+      <NoFundsModal isOpen={showNoFunds} onClose={() => setShowNoFunds(false)} />
     </div>
   );
 }

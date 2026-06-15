@@ -85,7 +85,7 @@
 //           <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl p-4 min-h-[120px]">
 //             <p className="text-gray-800 dark:text-gray-200 leading-relaxed">{result.original_text}</p>
 //           </div>
-//           <audio ref={originalAudioRef} src={result.original_audio_url} onEnded={() => setPlayingOriginal(false)} />
+//           <audio ref={originalAudioRef} src={resolveMediaUrl(result.original_audio_url)} onEnded={() => setPlayingOriginal(false)} />
 //         </div>
 
 //         {/* Translated */}
@@ -108,7 +108,7 @@
 //           <div className="bg-orange-50 dark:bg-orange-900/20 rounded-2xl p-4 min-h-[120px]">
 //             <p className="text-gray-800 dark:text-gray-200 leading-relaxed">{result.translated_text}</p>
 //           </div>
-//           <audio ref={translatedAudioRef} src={result.translated_audio_url} onEnded={() => setPlayingTranslated(false)} />
+//           <audio ref={translatedAudioRef} src={resolveMediaUrl(result.translated_audio_url)} onEnded={() => setPlayingTranslated(false)} />
 //         </div>
 //       </div>
 
@@ -126,6 +126,7 @@
 
 import { Play, Pause, Volume2, Clock, Copy, ArrowRight } from "lucide-react";
 import { useState, useRef } from "react";
+import { resolveMediaUrl } from "@/lib/api";
 
 const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors";
 
@@ -221,7 +222,7 @@ export default function TranslationResult({ result, inputLang, outputLang }: Tra
               </button>
             </div>
           </div>
-          <audio ref={originalAudioRef} src={result.original_audio_url} onEnded={() => setPlayingOriginal(false)} />
+          <audio ref={originalAudioRef} src={resolveMediaUrl(result.original_audio_url)} onEnded={() => setPlayingOriginal(false)} />
         </div>
 
         {/* Translated */}
@@ -247,7 +248,7 @@ export default function TranslationResult({ result, inputLang, outputLang }: Tra
               </button>
             </div>
           </div>
-          <audio ref={translatedAudioRef} src={result.translated_audio_url} onEnded={() => setPlayingTranslated(false)} />
+          <audio ref={translatedAudioRef} src={resolveMediaUrl(result.translated_audio_url)} onEnded={() => setPlayingTranslated(false)} />
         </div>
       </div>
     </div>

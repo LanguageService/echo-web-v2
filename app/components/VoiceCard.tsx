@@ -4,6 +4,8 @@ import { ArrowLeftRight, Mic, Square } from "lucide-react";
 import { useState, useRef } from "react";
 import TranslationResult from "@/components/TranslationResult";
 import ReactCountryFlag from "react-country-flag";
+import NoFundsModal from "@/components/NoFundsModal";
+import { hasSufficientBalance, resolveMediaUrl } from "@/lib/api";
 
 const languageToCountry: Record<string, string> = {
   EN: "GB", RW: "RW", FR: "FR", AR: "SA", PT: "PT",
@@ -30,6 +32,7 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [translationResult, setTranslationResult] = useState<TranslationResponse | null>(null);
+  const [showNoFunds, setShowNoFunds] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const [audioLevel, setAudioLevel] = useState(0);
@@ -57,6 +60,12 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
   }
 
   const startRecording = async () => {
+    const sufficient = await hasSufficientBalance();
+    if (!sufficient) {
+      setShowNoFunds(true);
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
@@ -120,11 +129,23 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
         body: formData,
       });
 
-      if (!response.ok) throw new Error(`Translation failed: ${response.status}`);
+      if (!response.ok) {
+        if (response.status === 403) {
+          const errorData = await response.json().catch(() => ({}));
+          if (errorData.error === "TRIAL_LIMIT_REACHED") {
+            alert(errorData.message || "You have reached your 3 free trials. Please create an account to continue.");
+            window.location.href = "/signup";
+            return;
+          }
+          setShowNoFunds(true);
+          return;
+        }
+        throw new Error(`Translation failed: ${response.status}`);
+      }
 
       const result: TranslationResponse = await response.json();
       setTranslationResult(result);
-      if (result.translated_audio_url) new Audio(result.translated_audio_url).play();
+      if (result.translated_audio_url) new Audio(resolveMediaUrl(result.translated_audio_url)!).play();
     } catch (error) {
       console.error("Error uploading audio:", error);
     } finally {
@@ -135,58 +156,62 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
   const handleMicClick = () => isRecording ? stopRecording() : startRecording();
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-6 sm:p-8 lg:p-12 flex-1 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-green-50 dark:from-green-900/10 via-transparent to-orange-50 dark:to-orange-900/10 pointer-events-none" />
+    <>
+      <div className="space-y-6">
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-6 sm:p-8 lg:p-12 flex-1 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-green-50 dark:from-green-900/10 via-transparent to-orange-50 dark:to-orange-900/10 pointer-events-none" />
 
-        <div className="relative flex items-center justify-center mb-8 sm:mb-16 gap-3">
-          <Lang code={inputLang.code} label={`${inputLang.code.toUpperCase()} ${inputLang.name}`} sub="INPUT" color="green" />
-          <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0">
-            <ArrowLeftRight size={14} className="dark:text-white" />
-          </div>
-          <Lang code={outputLang.code} label={`${outputLang.code.toUpperCase()} ${outputLang.name}`} sub="OUTPUT" color="orange" />
-        </div>
-
-        <div className="relative flex flex-col items-center text-center gap-4 sm:gap-6">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold dark:text-white">
-            {isRecording ? "Recording..." : isLoading ? "Processing please wait..." : "Ready to translate"}
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
-            {isRecording ? "Click to stop recording" : "Click the microphone to start recording"}
-          </p>
-
-          <div className="flex flex-col items-center">
-            <button
-              onClick={handleMicClick}
-              disabled={isLoading}
-              className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl transition-all duration-75 ${isRecording ? "bg-red-500 shadow-red-300 animate-pulse"
-                : isLoading ? "bg-gray-400"
-                  : "bg-green-500 shadow-green-300 hover:scale-110"
-                }`}
-              style={{
-                transform: isRecording ? `scale(${1.1 + (audioLevel / 255) * 0.8}) rotate(${(audioLevel / 255) * 10 - 5}deg)` : "scale(1)",
-                boxShadow: isRecording ? `0 0 ${20 + (audioLevel / 255) * 40}px rgba(239, 68, 68, 0.6)` : undefined,
-              }}
-            >
-              {isRecording ? (
-                <Square size={32} className="sm:w-10 sm:h-10" style={{ transform: `scale(${1 + (audioLevel / 255) * 0.3})` }} />
-              ) : (
-                <Mic size={32} className="sm:w-10 sm:h-10" />
-              )}
-            </button>
-            {isRecording && <WaveAnimation audioLevel={audioLevel} />}
+          <div className="relative flex items-center justify-center mb-8 sm:mb-16 gap-3">
+            <Lang code={inputLang.code} label={`${inputLang.code.toUpperCase()} ${inputLang.name}`} sub="INPUT" color="green" />
+            <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0">
+              <ArrowLeftRight size={14} className="dark:text-white" />
+            </div>
+            <Lang code={outputLang.code} label={`${outputLang.code.toUpperCase()} ${outputLang.name}`} sub="OUTPUT" color="orange" />
           </div>
 
-          <span className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 mt-2 sm:mt-4">
-            <kbd className="px-2 py-1 bg-gray-200 dark:bg-gray-700 dark:text-gray-300 rounded-md text-gray-600">Space</kbd>{" "}to speak
-          </span>
+          <div className="relative flex flex-col items-center text-center gap-4 sm:gap-6">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold dark:text-white">
+              {isRecording ? "Recording..." : isLoading ? "Processing please wait..." : "Ready to translate"}
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
+              {isRecording ? "Click to stop recording" : "Click the microphone to start recording"}
+            </p>
+
+            <div className="flex flex-col items-center">
+              <button
+                onClick={handleMicClick}
+                disabled={isLoading}
+                className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl transition-all duration-75 ${isRecording ? "bg-red-500 shadow-red-300 animate-pulse"
+                  : isLoading ? "bg-gray-400"
+                    : "bg-green-500 shadow-green-300 hover:scale-110"
+                  }`}
+                style={{
+                  transform: isRecording ? `scale(${1.1 + (audioLevel / 255) * 0.8}) rotate(${(audioLevel / 255) * 10 - 5}deg)` : "scale(1)",
+                  boxShadow: isRecording ? `0 0 ${20 + (audioLevel / 255) * 40}px rgba(239, 68, 68, 0.6)` : undefined,
+                }}
+              >
+                {isRecording ? (
+                  <Square size={32} className="sm:w-10 sm:h-10" style={{ transform: `scale(${1 + (audioLevel / 255) * 0.3})` }} />
+                ) : (
+                  <Mic size={32} className="sm:w-10 sm:h-10" />
+                )}
+              </button>
+              {isRecording && <WaveAnimation audioLevel={audioLevel} />}
+            </div>
+
+            <span className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 mt-2 sm:mt-4">
+              <kbd className="px-2 py-1 bg-gray-200 dark:bg-gray-700 dark:text-gray-300 rounded-md text-gray-600">Space</kbd>{" "}to speak
+            </span>
+          </div>
         </div>
+
+        {translationResult && (
+          <TranslationResult result={translationResult} inputLang={inputLang} outputLang={outputLang} />
+        )}
       </div>
 
-      {translationResult && (
-        <TranslationResult result={translationResult} inputLang={inputLang} outputLang={outputLang} />
-      )}
-    </div>
+      <NoFundsModal isOpen={showNoFunds} onClose={() => setShowNoFunds(false)} />
+    </>
   );
 }
 

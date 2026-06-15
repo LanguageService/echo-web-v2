@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import VoiceCard from "@/components/VoiceCard";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, ArrowRight, Mic, Copy } from "lucide-react";
+import { Clock, ArrowRight, Mic, Copy, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 import { fetchVoiceTranslationHistory, type VoiceTranslationHistory } from "@/lib/api";
 
@@ -53,6 +53,12 @@ function TranslatePage() {
   return (
     <>
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8 sm:py-12">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 mb-6 transition-colors"
+        >
+          <ArrowLeft size={18} /> Back
+        </button>
         <VoiceCard selectedLanguages={selectedLanguages} />
 
         {/* Translation History */}

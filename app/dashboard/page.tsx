@@ -4,7 +4,7 @@ import { Mic, MessageSquare, Image, FileText, ArrowRight, Volume2, Copy } from "
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { fetchRecentTranslations, type GeneralVoiceTranslationHistory } from "@/lib/api";
+import { fetchRecentTranslations, resolveMediaUrl, type GeneralVoiceTranslationHistory } from "@/lib/api";
 import { useToast } from "@/hooks/useToast";
 
 const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors cursor-pointer";
@@ -34,7 +34,7 @@ export default function Dashboard() {
     });
 
   const getFeatureTypeLabel = (type: string) =>
-    type === "SPEECH_TRANSLATION" ? "Voice" : "Text";
+    type === "speech" ? "Voice" : "Text";
 
   return (
     <main className="min-h-screen bg-white dark:bg-transparent px-4 sm:px-6 lg:px-10 pt-6 lg:pt-8 pb-24">
@@ -110,11 +110,11 @@ export default function Dashboard() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {/* {item.original_audio_url && ( */}
-                      <button onClick={() => new Audio(item.original_audio_url!).play()} className={btnClass}>
-                        <Volume2 size={16} /> Listen
-                      </button>
-                      {/* )} */}
+                      {item.original_audio_url && (
+                        <button onClick={() => new Audio(resolveMediaUrl(item.original_audio_url)!).play()} className={btnClass}>
+                          <Volume2 size={16} /> Listen
+                        </button>
+                      )}
                       <button onClick={async () => { await navigator.clipboard.writeText(item.original_text); toast("Text copied successfully!"); }} className={btnClass}>
                         <Copy size={16} /> Copy
                       </button>
@@ -130,11 +130,11 @@ export default function Dashboard() {
                     </p>
                     <hr className="my-3 border-gray-300 dark:border-gray-600" />
                     <div className="flex justify-between items-center">
-                      {/* {item.translated_audio_url && ( */}
-                      <button onClick={() => new Audio(item.translated_audio_url!).play()} className={btnClass}>
-                        <Volume2 size={16} /> Listen
-                      </button>
-                      {/* )} */}
+                      {item.translated_audio_url && (
+                        <button onClick={() => new Audio(resolveMediaUrl(item.translated_audio_url)!).play()} className={btnClass}>
+                          <Volume2 size={16} /> Listen
+                        </button>
+                      )}
                       <button onClick={async () => { await navigator.clipboard.writeText(item.translated_text); toast("Text copied successfully!"); }} className={btnClass}>
                         <Copy size={16} /> Copy
                       </button>

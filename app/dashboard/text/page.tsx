@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import TranslationCard from "@/components/TranslationCard";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { translateText, fetchTranslationHistory, type Language, type TranslationHistory } from "@/lib/api";
-import { Clock, ArrowRight, Mic, Copy } from "lucide-react";
+import { translateText, fetchTranslationHistory, hasSufficientBalance, type Language, type TranslationHistory } from "@/lib/api";
+import { Clock, ArrowRight, Mic, Copy, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
+import NoFundsModal from "@/components/NoFundsModal";
 
 const btnClass = "cursor-pointer border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors";
 
@@ -22,6 +23,7 @@ export default function TextTranslation({ text, isInput = false }: TextTranslati
   const [inputText, setInputText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [isTranslating, setIsTranslating] = useState(false);
+  const [showNoFunds, setShowNoFunds] = useState(false);
   const [history, setHistory] = useState<TranslationHistory[]>([]);
   const [selectedLanguages, setSelectedLanguages] = useState<{ input: Language | null; output: Language | null }>({ input: null, output: null });
 
@@ -41,6 +43,8 @@ export default function TextTranslation({ text, isInput = false }: TextTranslati
 
   const handleTranslate = async () => {
     if (!inputText.trim() || !selectedLanguages.input || !selectedLanguages.output) return;
+    const sufficient = await hasSufficientBalance();
+    if (!sufficient) { setShowNoFunds(true); return; }
     setIsTranslating(true);
     try {
       const result = await translateText({
@@ -64,6 +68,12 @@ export default function TextTranslation({ text, isInput = false }: TextTranslati
 
   return (
     <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
+      <button
+        onClick={() => router.back()}
+        className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
+      >
+        <ArrowLeft size={18} /> Back
+      </button>
       <LanguageSwitcher onLanguageChange={handleLanguageChange} />
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -176,6 +186,8 @@ export default function TextTranslation({ text, isInput = false }: TextTranslati
           </div>
         ))}
       </div>
+
+      <NoFundsModal isOpen={showNoFunds} onClose={() => setShowNoFunds(false)} />
     </div>
   );
 }

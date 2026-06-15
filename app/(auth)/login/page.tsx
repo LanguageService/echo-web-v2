@@ -22,9 +22,10 @@ import {
   FormMessage,
 } from "@/components/ui/Form";
 import { LogIn, Eye, EyeOff, ArrowLeft } from "lucide-react";
-import { loginUser, type LoginRequest } from "@/lib/api";
+import { loginUser, googleLoginUser, type LoginRequest } from "@/lib/api";
 import { z } from "zod";
 import { toast } from "react-toastify";
+import { GoogleLogin } from '@react-oauth/google';
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -189,16 +190,34 @@ export default function Login() {
               <hr className="flex-grow border-gray-300 dark:border-gray-600" />
             </div>
 
-            <div className="mt-6 grid grid-cols-3 justify-items-center">
-              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] dark:border-gray-600 hover:bg-[#F5FAFB] dark:hover:bg-gray-800 transition-colors">
-                <img src="/google.svg" alt="Google" className="w-5 h-5" />
-              </button>
-              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] dark:border-gray-600 hover:bg-[#F5FAFB] dark:hover:bg-gray-800 transition-colors">
-                <img src="/facebook.svg" alt="Facebook" className="w-5 h-5" />
-              </button>
-              <button className="flex items-center justify-center w-[64px] h-[56px] rounded-xl border border-[#DCDBDB] dark:border-gray-600 hover:bg-[#F5FAFB] dark:hover:bg-gray-800 transition-colors">
-                <img src="/apple.svg" alt="Apple" className="w-5 h-5" />
-              </button>
+            <div className="mt-6 flex justify-center w-full">
+              <GoogleLogin
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    setIsLoading(true);
+                    if (!credentialResponse.credential) throw new Error("No credential received");
+                    const response = await googleLoginUser(credentialResponse.credential);
+                    if (response.code === 200 && response.data?.token?.access) {
+                      localStorage.setItem("token", response.data.token.access);
+                      localStorage.setItem("refreshToken", response.data.token.refresh);
+                      document.cookie = `token=${response.data.token.access}; path=/; max-age=86400; SameSite=Lax`;
+                      toast.success("Login successful");
+                      router.push("/dashboard");
+                    } else {
+                      throw new Error(response.message || "Login failed");
+                    }
+                  } catch (err: any) {
+                    toast.error(err.message || "Google Login failed");
+                    setError(err.message || "Google Login failed");
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+                onError={() => {
+                  toast.error("Google Login Failed");
+                }}
+                useOneTap
+              />
             </div>
 
           </CardContent>

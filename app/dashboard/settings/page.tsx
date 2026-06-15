@@ -95,14 +95,6 @@ export default function SettingsPage() {
       </h1>
 
       <div className="grid gap-4 sm:gap-6">
-        <SettingCard title="AI Model" description="Choose the AI model for translations">
-          <select value={settings.model} onChange={(e) => updateSetting("model", e.target.value)} className={selectClass}>
-            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-            <option value="gpt-4">GPT-4</option>
-            <option value="claude-3">Claude 3</option>
-          </select>
-        </SettingCard>
-
         <SettingCard title="Voice" description="Select voice for audio output">
           <select value={settings.voice} onChange={(e) => updateSetting("voice", e.target.value)} className={selectClass}>
             <option value="Zephyr">Zephyr</option>

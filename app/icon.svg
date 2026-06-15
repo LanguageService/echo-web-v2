@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Dark rounded background -->
+  <rect width="32" height="32" rx="7" fill="#111827"/>
+
+  <!-- Speech bubble body -->
+  <path d="M16 5C10.477 5 6 9.03 6 14c0 2.56 1.12 4.87 2.94 6.52L8 27l5.6-2.24A11.1 11.1 0 0016 25c5.523 0 10-4.03 10-9s-4.477-9-10-9z" fill="url(#bubbleGrad)"/>
+
+  <!-- Waveform bars (5 bars, varying heights, centred) -->
+  <rect x="8.5"  y="12" width="2" height="5"  rx="1" fill="white" opacity="0.95"/>
+  <rect x="11.5" y="10" width="2" height="8"  rx="1" fill="white" opacity="0.95"/>
+  <rect x="14.5" y="11.5" width="2" height="6" rx="1" fill="white" opacity="0.95"/>
+  <rect x="17.5" y="9.5" width="2" height="9" rx="1" fill="white" opacity="0.95"/>
+  <rect x="20.5" y="11" width="2" height="6"  rx="1" fill="white" opacity="0.95"/>
+
+  <defs>
+    <linearGradient id="bubbleGrad" x1="6" y1="5" x2="26" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+</svg>

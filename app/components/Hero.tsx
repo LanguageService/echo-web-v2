@@ -1,28 +1,46 @@
+"use client";
+
+import { motion } from "framer-motion";
 import Features from "./Features";
 import CTAButtons from "./CTAButtons";
+import AnimatedWaveform from "./AnimatedWaveform";
+
+import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="text-center px-6 py-16 max-w-[1536px] mx-auto">
-      <h1 className="text-3xl md:text-4xl font-bold flex justify-center items-center gap-2">
-        <div className="w-12 h-12 bg-gradient-to-br from-[#249E8E] via-[#F2C94C] to-[#E96A3A] rounded-full flex items-center justify-center mr-3 shadow-lg">
-          <span className="text-xl world-logo">🌍</span>
+    <section className="text-center px-6 py-16 max-w-[1536px] mx-auto overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="flex flex-col justify-center items-center mb-8"
+      >
+        <div className="flex items-center justify-center p-4 mb-2">
+          <img src="/images/logo_v2.png" alt="ECHO Logo" className="w-auto h-12 md:h-16 object-contain dark:invert dark:drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]" />
         </div>
-        <span className="text-green-500">✨</span>
-        <span className="text-green-600 dark:text-green-400">ECHO</span>
-        <span className="text-yellow-400">✨</span>
-      </h1>
+        
+        <AnimatedWaveform />
 
-      <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
-        Speak in any language, hear it in another. Real-time voice translation
-        <br /> powered by AI.
-      </p>
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground">
+          Universal AI Translation
+        </h1>
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        className="mt-6 text-xl md:text-2xl text-muted-foreground font-medium max-w-3xl mx-auto leading-relaxed"
+      >
+        Speak, read, and listen in any language. Real-time translation for voice, documents, and text powered by AI.
+      </motion.p>
 
       <Features />
       <CTAButtons />
-      <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 font-bold">
+      <p className="mt-8 text-sm text-muted-foreground font-bold">
         Already have an account?{" "}
-        <span className="text-blue-600 dark:text-blue-400 cursor-pointer hover:underline">
+        <span className="text-primary cursor-pointer hover:underline underline-offset-4">
           Sign in here
         </span>
       </p>
