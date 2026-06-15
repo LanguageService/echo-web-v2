@@ -543,6 +543,7 @@ export interface GeneralVoiceTranslationHistory {
   audio_files: AudioFileRecord[];
   type: string;
   is_favorite?: boolean;
+  is_sms?: boolean;
 }
 
 export async function fetchRecentTranslations(isFavorite: boolean = false): Promise<RecentTranslationsResponse> {

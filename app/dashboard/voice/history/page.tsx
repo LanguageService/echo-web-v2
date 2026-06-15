@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { fetchVoiceTranslationHistory, type VoiceTranslationHistory } from "@/lib/api";
-import { ArrowLeft, Clock, ArrowRight, Mic, Copy } from "lucide-react";
+import { fetchVoiceTranslationHistory, toggleFavorite, type VoiceTranslationHistory, type GeneralVoiceTranslationHistory } from "@/lib/api";
+import { ArrowLeft, Clock, ArrowRight, Mic, Copy, Heart } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 
 const btnClass = "border dark:border-gray-600 rounded-full px-3 py-1 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors";
@@ -78,7 +78,16 @@ export default function TranslationHistoryPage() {
                   </span>
                 </div>
                 <div className="flex flex-col sm:items-end gap-1">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(item.date_created)}</span>
+                  <div className="flex items-center gap-2">
+                    <button onClick={async () => {
+                      const updated = await toggleFavorite(item.id);
+                      setHistory(history.map((h: any) => h.id === item.id ? { ...h, is_favorite: updated } : h));
+                      if(updated) toast("Added to favourites");
+                    }} className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition">
+                      <Heart className={`w-5 h-5 ${(item as any).is_favorite ? "fill-red-500 text-red-500" : "text-gray-400 dark:text-gray-500"}`} />
+                    </button>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(item.date_created)}</span>
+                  </div>
                   {/* <span className="text-xs text-gray-400 dark:text-gray-500">{item.total_processing_time.toFixed(2)}s processing time</span> */}
                 </div>
               </div>

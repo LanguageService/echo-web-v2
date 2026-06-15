@@ -15,7 +15,7 @@ export default function FavouritesPage() {
   const [history, setHistory] = useState<GeneralVoiceTranslationHistory[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"ALL" | "speech" | "text">("ALL");
+  const [filter, setFilter] = useState<"ALL" | "speech" | "text" | "sms">("ALL");
 
   useEffect(() => { loadHistory(); }, []);
 
@@ -40,7 +40,7 @@ export default function FavouritesPage() {
   const getFeatureTypeLabel = (type: string) =>
     type === "speech" ? "Voice" : "Text";
 
-  const filtered = filter === "ALL" ? history : history.filter(item => item.type === filter);
+  const filtered = filter === "ALL" ? history : filter === "sms" ? history.filter(item => item.is_sms === true) : filter === "text" ? history.filter(item => item.type === "text" && !item.is_sms) : history.filter(item => item.type === filter);
 
   if (loading) {
     return (
@@ -78,7 +78,7 @@ export default function FavouritesPage() {
       </div>
 
       <div className="flex gap-2 mb-6">
-        {(["ALL", "speech", "text"] as const).map((f) => (
+        {(["ALL", "speech", "text", "sms"] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -87,7 +87,7 @@ export default function FavouritesPage() {
               : "bg-gray-100 border border-gray-300 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
           >
-            {f === "ALL" ? "All" : f === "speech" ? "🎙 Voice" : "📝 Text"}
+            {f === "ALL" ? "All" : f === "speech" ? "🎙 Voice" : f === "text" ? "📝 Text" : "📱 SMS"}
           </button>
         ))}
       </div>
