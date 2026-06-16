@@ -1,10 +1,11 @@
 "use client";
 
 import { ArrowLeftRight, Mic, Square } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import TranslationResult from "@/components/TranslationResult";
 import ReactCountryFlag from "react-country-flag";
 import NoFundsModal from "@/components/NoFundsModal";
+import LiveWaveform from "@/components/LiveWaveform";
 import { hasSufficientBalance, resolveMediaUrl } from "@/lib/api";
 
 const languageToCountry: Record<string, string> = {
@@ -33,73 +34,89 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
   const [isLoading, setIsLoading] = useState(false);
   const [translationResult, setTranslationResult] = useState<TranslationResponse | null>(null);
   const [showNoFunds, setShowNoFunds] = useState(false);
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-  const [audioLevel, setAudioLevel] = useState(0);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const animationFrameRef = useRef<number | undefined>(undefined);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const mimeTypeRef = useRef<string>("audio/webm");
+  const [liveAnalyser, setLiveAnalyser] = useState<AnalyserNode | null>(null);
+  const isRecordingRef = useRef(false); // stable ref for Space handler
 
-  function WaveAnimation({ audioLevel }: { audioLevel: number }) {
-    const bars = [0.7, 1, 0.8, 1.2, 0.9, 1.1, 0.6, 1.3, 0.8, 1, 0.7];
-    return (
-      <div className="flex items-end justify-center gap-1 h-16 mt-6">
-        {bars.map((baseHeight, index) => (
-          <div
-            key={index}
-            className="bg-gradient-to-t from-red-500 to-red-300 rounded-full transition-all duration-75 animate-pulse"
-            style={{
-              width: "6px",
-              height: `${Math.max(8, (audioLevel / 255) * 64 * baseHeight)}px`,
-              animationDelay: `${index * 0.05}s`,
-              transform: `scaleY(${1 + (audioLevel / 255) * 2})`,
-            }}
-          />
-        ))}
-      </div>
-    );
-  }
+  // Sync ref whenever state changes so the keyboard handler always sees the current value
+  useEffect(() => { isRecordingRef.current = isRecording; }, [isRecording]);
+
+  // Space key = toggle recording (same as clicking the mic button)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.code !== "Space") return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      e.preventDefault(); // prevent page scroll
+      if (isRecordingRef.current) {
+        // stop: call stop() directly on the recorder — avoids stale isRecording state
+        if (mediaRecorderRef.current) {
+          mediaRecorderRef.current.stop();
+          setIsRecording(false);
+        }
+      } else {
+        startRecording();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const startRecording = async () => {
     const sufficient = await hasSufficientBalance();
-    if (!sufficient) {
-      setShowNoFunds(true);
-      return;
-    }
+    if (!sufficient) { setShowNoFunds(true); return; }
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+
+      // Detect the best supported MIME type for this browser
+      const preferredTypes = [
+        "audio/webm;codecs=opus", "audio/webm",
+        "audio/ogg;codecs=opus", "audio/ogg", "audio/mp4",
+      ];
+      const mimeType = preferredTypes.find((t) => MediaRecorder.isTypeSupported(t)) ?? "";
+      mimeTypeRef.current = mimeType || "audio/webm";
+
+      const mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
+      // AudioContext starts "suspended" in most browsers — must resume() after user gesture
       const audioContext = new AudioContext();
+      audioContextRef.current = audioContext;
+      await audioContext.resume();
+
       const analyser = audioContext.createAnalyser();
-      const microphone = audioContext.createMediaStreamSource(stream);
-      analyser.fftSize = 256;
-      microphone.connect(analyser);
-      analyserRef.current = analyser;
+      analyser.fftSize = 2048;
+      analyser.smoothingTimeConstant = 0.5;
+      audioContext.createMediaStreamSource(stream).connect(analyser);
+      setLiveAnalyser(analyser);
 
-      const updateAudioLevel = () => {
-        if (analyserRef.current) {
-          const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-          analyserRef.current.getByteFrequencyData(dataArray);
-          const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
-          setAudioLevel(average);
-          animationFrameRef.current = requestAnimationFrame(updateAudioLevel);
-        }
+      // Timeslice: collect chunks every 100ms so we always have data on stop
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) audioChunksRef.current.push(e.data);
       };
-      updateAudioLevel();
 
-      mediaRecorder.ondataavailable = (event) => { audioChunksRef.current.push(event.data); };
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        stream.getTracks().forEach((t) => t.stop());
+        setLiveAnalyser(null);
+        audioContextRef.current?.close();
+        audioContextRef.current = null;
+
+        const chunks = audioChunksRef.current;
+        if (chunks.length === 0) {
+          console.warn("[VoiceCard] No audio data captured");
+          return;
+        }
+        const audioBlob = new Blob(chunks, { type: mimeTypeRef.current });
         await uploadAudio(audioBlob);
-        stream.getTracks().forEach((track) => track.stop());
-        if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-        setAudioLevel(0);
       };
 
-      mediaRecorder.start();
+      mediaRecorder.start(100);
       setIsRecording(true);
     } catch (error) {
       console.error("Error accessing microphone:", error);
@@ -116,8 +133,10 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
   const uploadAudio = async (audioBlob: Blob) => {
     setIsLoading(true);
     try {
+      const ext = mimeTypeRef.current.includes("ogg") ? "ogg"
+               : mimeTypeRef.current.includes("mp4") ? "mp4" : "webm";
       const formData = new FormData();
-      formData.append("audio_file", audioBlob, "recording.wav");
+      formData.append("audio_file", audioBlob, `recording.${ext}`);
       formData.append("source_language", inputLang.code);
       formData.append("target_language", outputLang.code);
       formData.append("speech_service", "STS");
@@ -177,26 +196,34 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
               {isRecording ? "Click to stop recording" : "Click the microphone to start recording"}
             </p>
 
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center gap-4">
               <button
                 onClick={handleMicClick}
                 disabled={isLoading}
-                className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl transition-all duration-75 ${isRecording ? "bg-red-500 shadow-red-300 animate-pulse"
-                  : isLoading ? "bg-gray-400"
+                className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full text-white flex items-center justify-center shadow-2xl transition-all duration-75 ${
+                  isRecording
+                    ? "bg-red-500 shadow-red-300"
+                    : isLoading
+                    ? "bg-gray-400"
                     : "bg-green-500 shadow-green-300 hover:scale-110"
-                  }`}
-                style={{
-                  transform: isRecording ? `scale(${1.1 + (audioLevel / 255) * 0.8}) rotate(${(audioLevel / 255) * 10 - 5}deg)` : "scale(1)",
-                  boxShadow: isRecording ? `0 0 ${20 + (audioLevel / 255) * 40}px rgba(239, 68, 68, 0.6)` : undefined,
-                }}
+                }`}
               >
                 {isRecording ? (
-                  <Square size={32} className="sm:w-10 sm:h-10" style={{ transform: `scale(${1 + (audioLevel / 255) * 0.3})` }} />
+                  <Square size={32} className="sm:w-10 sm:h-10" />
+                ) : isLoading ? (
+                  <div className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <Mic size={32} className="sm:w-10 sm:h-10" />
                 )}
               </button>
-              {isRecording && <WaveAnimation audioLevel={audioLevel} />}
+
+              {/* Real-time canvas waveform — always visible, idles when not recording */}
+              <LiveWaveform
+                analyser={liveAnalyser}
+                bars={40}
+                height={72}
+                className="mt-2"
+              />
             </div>
 
             <span className="text-xs sm:text-sm text-gray-400 dark:text-gray-500 mt-2 sm:mt-4">

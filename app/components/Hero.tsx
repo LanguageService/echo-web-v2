@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Features from "./Features";
 import CTAButtons from "./CTAButtons";
 import AnimatedWaveform from "./AnimatedWaveform";
+import Link from "next/link";
 
 import Image from "next/image";
 
@@ -40,9 +41,9 @@ export default function Hero() {
       <CTAButtons />
       <p className="mt-8 text-sm text-muted-foreground font-bold">
         Already have an account?{" "}
-        <span className="text-primary cursor-pointer hover:underline underline-offset-4">
+        <Link href="/login" className="text-primary hover:underline underline-offset-4">
           Sign in here
-        </span>
+        </Link>
       </p>
     </section>
   );
