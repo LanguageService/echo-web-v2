@@ -42,7 +42,7 @@ export default function ProfileHeader({
           state: profile.state,
           address: profile.address,
           date_of_birth: profile.date_of_birth,
-          profile_picture: url,
+          profile_picture: file, // Pass the File object to API
         };
         await updateUserProfile(userId, updateData);
         toast("Profile picture updated successfully!");

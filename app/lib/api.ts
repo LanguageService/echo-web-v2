@@ -269,7 +269,7 @@ export interface UpdateUserProfileRequest {
   state: string | null;
   address: string;
   date_of_birth: string | null;
-  profile_picture?: string | null;
+  profile_picture?: string | File | null;
 }
 
 export async function updateUserProfile(
@@ -277,13 +277,24 @@ export async function updateUserProfile(
   data: UpdateUserProfileRequest,
 ): Promise<UserProfile> {
   const token = localStorage.getItem("token");
+
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else {
+        formData.append(key, String(value));
+      }
+    }
+  });
+
   const response = await fetch(`${API_BASE_URL}/user/users/${id}/`, {
     method: "PATCH",
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: formData,
   });
 
   if (!response.ok) {
@@ -348,6 +359,7 @@ export async function translateText(
 // text translation history
 export interface TranslationHistory {
   id: string;
+  title?: string;
   original_text: string;
   translated_text: string;
   original_language: string;
@@ -358,12 +370,12 @@ export interface TranslationHistory {
   total_processing_time: number;
   date_created: string;
   last_modified: string;
+  status?: string;
 }
 
 export async function fetchTranslationHistory(): Promise<TranslationHistory[]> {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${API_BASE_URL}/translations/text`, {
-    // const response = await fetch(`${API_BASE_URL}/text/text`, {
+  const response = await fetch(`${API_BASE_URL}/translations/text/?mode=SHORT`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -371,6 +383,21 @@ export async function fetchTranslationHistory(): Promise<TranslationHistory[]> {
 
   if (!response.ok) {
     throw new Error("Failed to fetch translation history");
+  }
+
+  return response.json();
+}
+
+export async function fetchDocumentHistory(): Promise<TranslationHistory[]> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/translations/text/?mode=LARGE`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch document history");
   }
 
   return response.json();
@@ -533,6 +560,7 @@ export interface RecentTranslationsResponse {
 
 export interface GeneralVoiceTranslationHistory {
   id: string;
+  title?: string;
   original_text: string;
   translated_text: string;
   original_language: string;
@@ -541,6 +569,8 @@ export interface GeneralVoiceTranslationHistory {
   target_language_name: string;
   original_audio_url: string | null;
   translated_audio_url: string | null;
+  original_file_url?: string;
+  translated_file_url?: string;
   confidence_score: number;
   total_processing_time: number;
   session_id: string | null;
@@ -548,6 +578,7 @@ export interface GeneralVoiceTranslationHistory {
   last_modified: string;
   audio_files: AudioFileRecord[];
   type: string;
+  status?: string;
   is_favorite?: boolean;
   is_sms?: boolean;
 }
@@ -969,4 +1000,22 @@ export async function deleteWebhook(id: string): Promise<void> {
   if (!response.ok && response.status !== 204) {
     throw new Error("Failed to delete webhook");
   }
+}
+
+export async function fetchTextTranslationDetails(id: string): Promise<any> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/translations/text/${id}/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error("Failed to fetch text translation details");
+  return response.json();
+}
+
+export async function fetchVoiceTranslationDetails(id: string): Promise<any> {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_BASE_URL}/translations/speech/${id}/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) throw new Error("Failed to fetch voice translation details");
+  return response.json();
 }

@@ -6,7 +6,7 @@ import TranslationResult from "@/components/TranslationResult";
 import ReactCountryFlag from "react-country-flag";
 import NoFundsModal from "@/components/NoFundsModal";
 import LiveWaveform from "@/components/LiveWaveform";
-import { hasSufficientBalance, resolveMediaUrl } from "@/lib/api";
+import { hasSufficientBalance, resolveMediaUrl, fetchVoiceTranslationDetails } from "@/lib/api";
 
 const languageToCountry: Record<string, string> = {
   EN: "GB", RW: "RW", FR: "FR", AR: "SA", PT: "PT",
@@ -34,6 +34,7 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
   const [isLoading, setIsLoading] = useState(false);
   const [translationResult, setTranslationResult] = useState<TranslationResponse | null>(null);
   const [showNoFunds, setShowNoFunds] = useState(false);
+  const [translationId, setTranslationId] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -44,6 +45,33 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
 
   // Sync ref whenever state changes so the keyboard handler always sees the current value
   useEffect(() => { isRecordingRef.current = isRecording; }, [isRecording]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (translationId && isLoading) {
+      intervalId = setInterval(async () => {
+        try {
+          const data = await fetchVoiceTranslationDetails(translationId);
+          if (data.status === "COMPLETED" || data.status === "done") {
+            setTranslationResult(data);
+            setIsLoading(false);
+            setTranslationId(null);
+            if (data.translated_audio_url) {
+              new Audio(resolveMediaUrl(data.translated_audio_url)!).play();
+            }
+          } else if (data.status === "FAILED" || data.status === "error") {
+            console.error("Audio translation failed:", data.error_message);
+            setIsLoading(false);
+            setTranslationId(null);
+            alert("Audio translation failed. Please try again.");
+          }
+        } catch (err) {
+          console.error("Polling error:", err);
+        }
+      }, 3000);
+    }
+    return () => clearInterval(intervalId);
+  }, [translationId, isLoading]);
 
   // Space key = toggle recording (same as clicking the mic button)
   useEffect(() => {
@@ -142,7 +170,7 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
       formData.append("speech_service", "STS");
 
       const token = localStorage.getItem("token");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/translations/speech/base/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/translations/speech/document/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -154,20 +182,26 @@ export default function VoiceCard({ selectedLanguages }: { selectedLanguages?: S
           if (errorData.error === "TRIAL_LIMIT_REACHED") {
             alert(errorData.message || "You have reached your 3 free trials. Please create an account to continue.");
             window.location.href = "/signup";
+            setIsLoading(false);
             return;
           }
           setShowNoFunds(true);
+          setIsLoading(false);
           return;
         }
         throw new Error(`Translation failed: ${response.status}`);
       }
 
-      const result: TranslationResponse = await response.json();
-      setTranslationResult(result);
-      if (result.translated_audio_url) new Audio(resolveMediaUrl(result.translated_audio_url)!).play();
+      const data = await response.json();
+      if (data.translation_id) {
+        setTranslationId(data.translation_id);
+      } else {
+        setTranslationResult(data);
+        setIsLoading(false);
+        if (data.translated_audio_url) new Audio(resolveMediaUrl(data.translated_audio_url)!).play();
+      }
     } catch (error) {
       console.error("Error uploading audio:", error);
-    } finally {
       setIsLoading(false);
     }
   };
