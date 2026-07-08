@@ -94,3 +94,8 @@ resource "aws_s3_bucket_policy" "frontend_policy" {
   bucket = aws_s3_bucket.frontend.id
   policy = data.aws_iam_policy_document.s3_policy.json
 }
+
+output "cloudfront_distribution_id" {
+  description = "The ID of the CloudFront distribution"
+  value       = aws_cloudfront_distribution.frontend.id
+}
