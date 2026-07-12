@@ -5,8 +5,8 @@ import { FileText, ExternalLink, Play, Loader2 } from "lucide-react";
 import * as mammoth from "mammoth";
 import * as XLSX from "xlsx";
 import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 // Configure pdfjs worker
 if (typeof window !== "undefined") {
