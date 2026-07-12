@@ -442,12 +442,12 @@ export default function DocumentTranslationPage() {
           <div className="space-y-4">
             {history.slice(0, 3).map((item) => (
               <div key={item.id} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-orange-500 dark:hover:border-orange-500 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600">
+                <div className="flex items-center gap-4 flex-1 min-w-0 pr-4">
+                  <div className="p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-100 dark:border-gray-600 shrink-0">
                     <FileText className="w-6 h-6 text-orange-500" />
                   </div>
-                  <div>
-                    <h4 className="font-medium text-gray-800 dark:text-white">{item.title || "Document Translation"}</h4>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="font-medium text-gray-800 dark:text-white truncate">{item.title || "Document Translation"}</h4>
                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
                       <span>{item.original_language_name || item.original_language}</span>
                       <ArrowRight className="w-3 h-3" />

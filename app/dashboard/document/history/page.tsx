@@ -102,12 +102,12 @@ export default function DocumentHistoryPage() {
           {history.map((item: any) => (
             <div key={item.id} className="bg-white dark:bg-gray-900 border border-[#b9ced5] dark:border-gray-700 rounded-xl p-4 sm:p-6 hover:shadow-md transition">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-3 flex-1 min-w-0 pr-4">
+                  <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-700 shrink-0">
                     <FileText className="w-5 h-5 text-orange-500" />
                   </div>
-                  <h3 className="font-semibold text-gray-800 dark:text-white">{item.title || "Document Translation"}</h3>
-                  <span className={`px-2 py-1 text-xs rounded-full font-medium ${
+                  <h3 className="font-semibold text-gray-800 dark:text-white truncate">{item.title || "Document Translation"}</h3>
+                  <span className={`shrink-0 px-2 py-1 text-xs rounded-full font-medium ${
                     item.status === 'COMPLETED' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
                     item.status === 'FAILED' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
                     'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
