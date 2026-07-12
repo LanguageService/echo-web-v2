@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchDocumentHistory, toggleFavorite, type TranslationHistory } from "@/lib/api";
-import { ArrowLeft, Clock, ArrowRight, Heart, FileText, Download } from "lucide-react";
+import { ArrowLeft, Clock, ArrowRight, Heart, FileText, Download, Eye } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
 import DocumentPreview from "@/components/DocumentPreview";
+import PreviewModal from "@/components/PreviewModal";
 
 const btnClass = "border dark:border-gray-600 rounded-full px-4 py-2 flex items-center justify-center gap-2 text-sm font-medium transition-colors";
 
@@ -13,6 +14,7 @@ export default function DocumentHistoryPage() {
   const router = useRouter();
   const [history, setHistory] = useState<TranslationHistory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [previewData, setPreviewData] = useState<{ isOpen: boolean; url: string; name: string } | null>(null);
   const { toast, toasts } = useToast();
 
   useEffect(() => { loadHistory(); }, []);
@@ -69,6 +71,16 @@ export default function DocumentHistoryPage() {
       </div>
     );
   }
+
+  const getTranslatedFilename = (title: string | undefined) => {
+    if (!title) return "Translated_Document";
+    const parts = title.split('.');
+    if (parts.length > 1) {
+      const ext = parts.pop();
+      return `${parts.join('.')}_translated.${ext}`;
+    }
+    return `${title}_translated`;
+  };
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto">
@@ -134,9 +146,14 @@ export default function DocumentHistoryPage() {
                     {item.original_file_url ? (
                       <>
                         <DocumentPreview fileUrl={item.original_file_url} fileName="Original Document" className="w-full h-40 mb-3" />
-                        <button onClick={() => handleDownload(item.original_file_url, item.title ? `${item.title}_original` : "Original_Document")} className={`${btnClass} text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 border-blue-200 dark:border-blue-800 w-full sm:w-auto`}>
-                          <Download size={16} /> Download Original
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-2 w-full">
+                          <button onClick={() => setPreviewData({ isOpen: true, url: item.original_file_url, name: item.title ? `${item.title} (Original)` : "Original Document" })} className={`${btnClass} flex-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border-gray-200 dark:border-gray-700`}>
+                            <Eye size={16} /> Preview
+                          </button>
+                          <button onClick={() => handleDownload(item.original_file_url, item.title ? `${item.title}_original` : "Original_Document")} className={`${btnClass} flex-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 border-blue-200 dark:border-blue-800`}>
+                            <Download size={16} /> Download
+                          </button>
+                        </div>
                       </>
                     ) : (
                       <span className="text-sm text-gray-500">Not available</span>
@@ -150,9 +167,14 @@ export default function DocumentHistoryPage() {
                     {item.translated_file_url ? (
                       <>
                         <DocumentPreview fileUrl={item.translated_file_url} fileName="Translated Document" className="w-full h-40 mb-3" />
-                        <button onClick={() => handleDownload(item.translated_file_url, item.title ? `${item.title}_translated` : "Translated_Document")} className={`${btnClass} text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30 border-green-200 dark:border-green-800 w-full sm:w-auto`}>
-                          <Download size={16} /> Download Translation
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-2 w-full">
+                          <button onClick={() => setPreviewData({ isOpen: true, url: item.translated_file_url, name: getTranslatedFilename(item.title) })} className={`${btnClass} flex-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border-gray-200 dark:border-gray-700`}>
+                            <Eye size={16} /> Preview
+                          </button>
+                          <button onClick={() => handleDownload(item.translated_file_url, getTranslatedFilename(item.title))} className={`${btnClass} flex-1 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30 border-green-200 dark:border-green-800`}>
+                            <Download size={16} /> Download
+                          </button>
+                        </div>
                       </>
                     ) : item.status === "COMPLETED" && item.translated_text ? (
                       <span className="text-sm text-gray-500">Text only</span>
@@ -190,6 +212,16 @@ export default function DocumentHistoryPage() {
             ))}
           </div>
         </div>
+      )}
+
+      {previewData && (
+        <PreviewModal 
+          isOpen={previewData.isOpen} 
+          onClose={() => setPreviewData(null)} 
+          fileUrl={previewData.url} 
+          fileName={previewData.name} 
+          onDownload={() => handleDownload(previewData.url, previewData.name)}
+        />
       )}
     </div>
   );

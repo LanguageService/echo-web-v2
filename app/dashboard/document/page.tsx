@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Upload, X, Download, ArrowRight, CheckCircle, Loader2, ChevronDown, ChevronUp, FileSpreadsheet, Clock } from "lucide-react";
+import { FileText, Upload, X, Download, ArrowRight, CheckCircle, Loader2, ChevronDown, ChevronUp, FileSpreadsheet, Clock, Eye } from "lucide-react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { hasSufficientBalance, fetchTextTranslationDetails, fetchDocumentHistory, type Language, type TranslationHistory } from "@/lib/api";
 import NoFundsModal from "@/components/NoFundsModal";
 import DocumentPreview from "@/components/DocumentPreview";
+import PreviewModal from "@/components/PreviewModal";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
 
@@ -23,6 +24,7 @@ interface DocumentResult {
 
 export default function DocumentTranslationPage() {
   const router = useRouter();
+  const [previewData, setPreviewData] = useState<{ isOpen: boolean; url: string; name: string } | null>(null);
   const { toast, toasts } = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string>("");
@@ -372,7 +374,10 @@ export default function DocumentTranslationPage() {
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700/50 rounded-xl p-4 flex flex-col items-center justify-center gap-2">
                   <DocumentPreview fileUrl={result.original_file_url} fileName="Original Document" className="w-full h-48" />
                   {result.original_file_url && (
-                    <button onClick={() => handleDownload(result.original_file_url!, file?.name ? `original_${file.name}` : "Original_Document")} className="text-blue-600 hover:underline text-sm font-medium mt-2">Download Original</button>
+                    <div className="flex items-center gap-4 mt-2">
+                      <button onClick={() => setPreviewData({ isOpen: true, url: result.original_file_url!, name: file?.name ? `original_${file.name}` : "Original_Document" })} className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm font-medium flex items-center gap-1"><Eye size={14} /> Preview</button>
+                      <button onClick={() => handleDownload(result.original_file_url!, file?.name ? `original_${file.name}` : "Original_Document")} className="text-blue-600 hover:underline text-sm font-medium flex items-center gap-1"><Download size={14} /> Download</button>
+                    </div>
                   )}
                 </div>
               )}
@@ -387,7 +392,10 @@ export default function DocumentTranslationPage() {
                 <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700/50 rounded-xl p-4 flex flex-col items-center justify-center gap-2">
                   <DocumentPreview fileUrl={result.translated_file_url} fileName="Translated Document" className="w-full h-48" />
                   {result.translated_file_url && (
-                    <button onClick={() => handleDownload(result.translated_file_url, file?.name ? `translated_${file.name}` : "Translated_Document")} className="text-green-600 hover:underline text-sm font-medium mt-2">Download Translation</button>
+                    <div className="flex items-center gap-4 mt-2">
+                      <button onClick={() => setPreviewData({ isOpen: true, url: result.translated_file_url, name: file?.name ? `translated_${file.name}` : "Translated_Document" })} className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm font-medium flex items-center gap-1"><Eye size={14} /> Preview</button>
+                      <button onClick={() => handleDownload(result.translated_file_url, file?.name ? `translated_${file.name}` : "Translated_Document")} className="text-green-600 hover:underline text-sm font-medium flex items-center gap-1"><Download size={14} /> Download</button>
+                    </div>
                   )}
                 </div>
               )}
@@ -396,9 +404,14 @@ export default function DocumentTranslationPage() {
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
             {result.translated_file_url && (
-              <button onClick={() => handleDownload(result.translated_file_url, file?.name ? `translated_${file.name}` : "Translated_Document")} className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold transition">
-                <Download className="w-4 h-4" /> Download Translated Document
-              </button>
+              <>
+                <button onClick={() => setPreviewData({ isOpen: true, url: result.translated_file_url, name: file?.name ? `translated_${file.name}` : "Translated_Document" })} className="flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-800 dark:text-white px-6 py-3 rounded-full font-semibold transition">
+                  <Eye className="w-4 h-4" /> Preview
+                </button>
+                <button onClick={() => handleDownload(result.translated_file_url, file?.name ? `translated_${file.name}` : "Translated_Document")} className="flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold transition">
+                  <Download className="w-4 h-4" /> Download
+                </button>
+              </>
             )}
             <button onClick={resetPage} className="flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-full font-semibold transition">
               Translate Another Document
@@ -458,6 +471,16 @@ export default function DocumentTranslationPage() {
       </div>
 
       <NoFundsModal isOpen={showNoFunds} onClose={() => setShowNoFunds(false)} />
+
+      {previewData && (
+        <PreviewModal 
+          isOpen={previewData.isOpen} 
+          onClose={() => setPreviewData(null)} 
+          fileUrl={previewData.url} 
+          fileName={previewData.name} 
+          onDownload={() => handleDownload(previewData.url, previewData.name)}
+        />
+      )}
 
       <div className="fixed top-4 right-4 space-y-2 z-50">
         {toasts.map((message, index) => (
