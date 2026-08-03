@@ -19,6 +19,27 @@ resource "aws_cloudfront_origin_access_control" "frontend_oac" {
   signing_protocol                  = "sigv4"
 }
 
+resource "aws_cloudfront_function" "nextjs_router" {
+  name    = "${var.project_name}-${var.environment}-nextjs-router"
+  runtime = "cloudfront-js-1.0"
+  publish = true
+  code    = <<EOF
+function handler(event) {
+    var request = event.request;
+    var uri = request.uri;
+    
+    if (uri.endsWith('/')) {
+        request.uri += 'index.html';
+    } 
+    else if (!uri.includes('.')) {
+        request.uri += '.html';
+    }
+
+    return request;
+}
+EOF
+}
+
 resource "aws_cloudfront_distribution" "frontend" {
   origin {
     domain_name              = aws_s3_bucket.frontend.bucket_regional_domain_name
@@ -46,20 +67,25 @@ resource "aws_cloudfront_distribution" "frontend" {
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.nextjs_router.arn
+    }
   }
 
   custom_error_response {
     error_caching_min_ttl = 300
     error_code            = 403
-    response_code         = 200
-    response_page_path    = "/index.html"
+    response_code         = 404
+    response_page_path    = "/404.html"
   }
 
   custom_error_response {
     error_caching_min_ttl = 300
     error_code            = 404
-    response_code         = 200
-    response_page_path    = "/index.html"
+    response_code         = 404
+    response_page_path    = "/404.html"
   }
 
   restrictions {
