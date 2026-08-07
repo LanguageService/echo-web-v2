@@ -29,6 +29,7 @@ const NavBar = () => {
             <button onClick={() => router.push("/about")} className="hover:text-foreground transition-colors">About Us</button>
             <button onClick={() => router.push("/pricing")} className="hover:text-foreground transition-colors">Pricing</button>
             <button onClick={() => router.push("/developer/docs")} className="hover:text-foreground transition-colors">Developer</button>
+            <button onClick={() => router.push("/contact")} className="hover:text-foreground transition-colors">Contact Us</button>
           </div>
 
           <div className="flex items-center ml-auto gap-1 md:gap-2">

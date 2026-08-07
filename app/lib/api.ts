@@ -1019,3 +1019,24 @@ export async function fetchVoiceTranslationDetails(id: string): Promise<any> {
   if (!response.ok) throw new Error("Failed to fetch voice translation details");
   return response.json();
 }
+
+export interface ContactFormRequest {
+  name: string;
+  email: string;
+  message: string;
+}
+
+export async function submitContactForm(data: ContactFormRequest): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/support/contact/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  
+  if (!response.ok) {
+    throw new Error("Failed to submit contact form");
+  }
+  return response.json();
+}
