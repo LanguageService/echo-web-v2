@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       req.headers.get("x-real-ip") ||
-      "unknown";
+      "127.0.0.1";
 
     const formData = await req.formData();
     const audioFile = formData.get("audio_file");
