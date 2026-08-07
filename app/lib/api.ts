@@ -1027,7 +1027,7 @@ export interface ContactFormRequest {
 }
 
 export async function submitContactForm(data: ContactFormRequest): Promise<any> {
-  const response = await fetch(`${API_BASE_URL}/support/contact/`, {
+  const response = await fetch(`${API_BASE_URL}/contact/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
