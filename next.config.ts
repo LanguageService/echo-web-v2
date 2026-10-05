@@ -4,6 +4,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8001/a
 
 const nextConfig: NextConfig = {
   output: "export",
+  trailingSlash: true,
   // Note: rewrites() are not supported when output is "export".
   // API calls must be made directly to NEXT_PUBLIC_API_BASE_URL.
 };
